@@ -8,6 +8,10 @@ import { stopCard, legCard, cardHTML, loadColl, scoreOf, standings } from './gam
 import { openApp } from './game/shell.js';
 import { toast, sfx, burstAt, armReveals } from './ui/fx.js';
 import { fogBurst, phase, illum } from './three/fog.js';
+import { initTonight, omenTonight } from './game/nightly.js';
+import { startAmbience, swell } from './ui/ambience.js';
+import { haptic, requestMotion } from './ui/motion.js';
+import { soundBtn } from './game/shell.js';
 
 let breakSeal3D = null;
 
@@ -48,7 +52,7 @@ export function renderDecks(){
 
 function breakHero(){
   const st=$('#sealStage'); if(st.classList.contains('broken')) return;
-  st.classList.add('broken'); sfx('crack'); fogBurst(); if(breakSeal3D) breakSeal3D(); else burstAt($('#sealBtn'),90,200);
+  st.classList.add('broken'); sfx('crack'); haptic('crack'); requestMotion(); startAmbience('landing'); fogBurst(); if(breakSeal3D) breakSeal3D(); else burstAt($('#sealBtn'),90,200);
   setTimeout(()=>{ document.getElementById('doors').scrollIntoView({behavior: reduce?'auto':'smooth'}); }, reduce?0:1900);
   setTimeout(()=>st.classList.remove('broken'), 4200);
 }
@@ -56,6 +60,13 @@ function breakHero(){
 export function setSealBreaker(fn){ breakSeal3D = fn || null; }
 
 export function initLanding(){
+  $('#navSound').outerHTML = soundBtn();
+  const on=$('#omenName'); if(on) on.textContent=omenTonight().name;
+  initTonight((gain,streak,miss)=>{
+    if(miss){ sfx('bad'); haptic('bad'); toast('Not quite. The riddle waits.'); return; }
+    sfx('ok'); haptic('win'); fogBurst(); startAmbience('landing'); swell(2); burstAt($('#tonight .nightly'),70,220);
+    toast(`Solved · +${gain} season points · ${streak} ${streak===1?'night':'nights'} in a row`); renderArcana(); renderBoard();
+  });
 $('#doorList').innerHTML = Object.entries(J).map(([id,j]) => `
   <article class="door">
     <div class="mirror" style="--c:${j.hc};--bf:${j.bf}" data-open="${id}" role="button" tabindex="0" aria-label="Open ${esc(j.name)}"><div class="mist m1"></div><div class="mist m2"></div><div class="em">${em(j.em,1.8)}</div><div class="glass"></div></div>

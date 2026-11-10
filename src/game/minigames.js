@@ -2,13 +2,13 @@
 import { esc } from '../lib/util.js';
 import { em } from '../data/emblems.js';
 import { S, setCleanup, stopGame } from './state.js';
-import { col } from './shell.js';
+import { col, setResonance } from './shell.js';
 import { solved } from './flow.js';
 import { sfx } from '../ui/fx.js';
 
 export function gameEnd(ok,msg,pts,okMsg){
   if(ok){ solved(pts,okMsg,900); return; }
-  S.clean=false;
+  S.clean=false; S.taskDirty=true; setResonance(0);
   const A=document.getElementById('gA'); if(!A) return;
   A.innerHTML=`<p class="small" style="text-align:center;margin:0">${esc(msg)}</p><button class="btn btn-gold" type="button" data-a="g-retry">Try again</button><button class="btn btn-ghost" type="button" data-a="g-accept">Keep going anyway</button>`;
 }
@@ -113,3 +113,101 @@ export const GAME_TASKS = {
     <div class="gamebox"><canvas id="gc"></canvas></div>
     <div class="actions" id="gA"><button class="btn btn-gold" type="button" data-a="rh-start">Start</button></div>`
 };
+
+/* ---------------- the wandering light: tilt the phone (or drag) to guide a light through the lanes ---------------- */
+// walls are [x, y, w, h] in 0..1 of the board; a = start, b = goal, m = motes worth bonus points
+export const TILT_LAYOUTS = {
+  field: { h: 400, a: [.1, .88], b: [.88, .1], m: [[.5, .86], [.5, .6], [.5, .35]],
+    walls: [[0, .7, .7, .06], [.3, .45, .7, .06], [0, .2, .7, .06]] },
+  lanes: { h: 400, a: [.1, .1], b: [.9, .88], m: [[.38, .82], [.62, .16], [.9, .3]],
+    walls: [[.24, 0, .06, .66], [.5, .34, .06, .66], [.76, 0, .06, .66]] }
+};
+const TILT_COL = { lantern: '#FFB65C', echo: '#7FD6C8', starfall: '#9FB0FF', feast: '#FF7A86' };
+
+function tiltBoard(g, w, h, L, col, motes, glowT){
+  g.clearRect(0, 0, w, h);
+  // faint street grid under the lanes
+  g.strokeStyle = 'rgba(237,228,218,.05)'; g.lineWidth = 1;
+  for (let x = 0; x < w; x += 24){ g.beginPath(); g.moveTo(x, 0); g.lineTo(x, h); g.stroke(); }
+  for (let y = 0; y < h; y += 24){ g.beginPath(); g.moveTo(0, y); g.lineTo(w, y); g.stroke(); }
+  L.walls.forEach(([x, y, ww, hh]) => {
+    const X = x * w, Y = y * h, W = ww * w, H = hh * h;
+    const gr = g.createLinearGradient(X, Y, X, Y + H); gr.addColorStop(0, '#3a1a1c'); gr.addColorStop(1, '#170a0c');
+    g.fillStyle = gr; g.fillRect(X, Y, W, H);
+    g.strokeStyle = 'rgba(214,185,138,.55)'; g.lineWidth = 1.2; g.strokeRect(X + .5, Y + .5, W - 1, H - 1);
+  });
+  // the goal: a lantern-shaped glow that breathes
+  const [bx, by] = [L.b[0] * w, L.b[1] * h], pulse = 1 + .15 * Math.sin(glowT * 3);
+  const gg = g.createRadialGradient(bx, by, 0, bx, by, 42 * pulse); gg.addColorStop(0, col + 'cc'); gg.addColorStop(1, col + '00');
+  g.fillStyle = gg; g.fillRect(bx - 50, by - 50, 100, 100);
+  g.strokeStyle = col; g.lineWidth = 1.5; g.beginPath(); g.arc(bx, by, 16, 0, 6.283); g.stroke();
+  motes.forEach(m => { if (m.got) return; const x = m.x * w, y = m.y * h; drawStar(g, x, y, 6 + Math.sin(glowT * 4 + x) * 1.2, glowT); });
+}
+
+export function runTilt(t, journey, haptic, tiltNow){
+  const L = TILT_LAYOUTS[t.layout] || TILT_LAYOUTS.field, col = TILT_COL[journey] || '#F0D8C0';
+  const { c, g, w, h } = setupCanvas('gc', L.h);
+  const motes = L.m.map(([x, y]) => ({ x, y, got: false }));
+  const R = 10, orb = { x: L.a[0] * w, y: L.a[1] * h, vx: 0, vy: 0 }, trail = [];
+  let touches = 0, lastHit = 0, got = 0, raf, last = performance.now(), drag = null, keys = { x: 0, y: 0 }, done = false;
+  const rects = L.walls.map(([x, y, ww, hh]) => [x * w, y * h, ww * w, hh * h]);
+  const pd = e => { const r = c.getBoundingClientRect(); drag = { x: e.clientX - r.left, y: e.clientY - r.top }; c.setPointerCapture(e.pointerId); };
+  const pm = e => { if (!drag) return; const r = c.getBoundingClientRect(); drag.x = e.clientX - r.left; drag.y = e.clientY - r.top; };
+  const pu = () => { drag = null; };
+  const kd = e => { const k = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] }[e.key]; if (k){ e.preventDefault(); keys = { x: k[0], y: k[1] }; } };
+  const ku = e => { if (e.key.startsWith('Arrow')) keys = { x: 0, y: 0 }; };
+  c.addEventListener('pointerdown', pd); c.addEventListener('pointermove', pm); c.addEventListener('pointerup', pu); c.addEventListener('pointercancel', pu);
+  addEventListener('keydown', kd); addEventListener('keyup', ku);
+  const setInfo = () => { const a = document.getElementById('gC'); if (a) a.textContent = got; const b = document.getElementById('gT'); if (b) b.textContent = touches; };
+  const step = now => {
+    const dt = Math.min(.033, (now - last) / 1000); last = now; const tt = now / 1000;
+    let ax = 0, ay = 0; const tl = tiltNow();
+    if (drag){ ax = (drag.x - orb.x) * 9; ay = (drag.y - orb.y) * 9; }
+    else if (tl.source === 'gyro'){ ax = tl.x * 1300; ay = tl.y * 1300; }
+    if (keys.x || keys.y){ ax = keys.x * 900; ay = keys.y * 900; }
+    orb.vx = (orb.vx + ax * dt) * Math.exp(-dt * 1.6); orb.vy = (orb.vy + ay * dt) * Math.exp(-dt * 1.6);
+    const sp = Math.hypot(orb.vx, orb.vy); if (sp > 380){ orb.vx *= 380 / sp; orb.vy *= 380 / sp; }
+    orb.x += orb.vx * dt; orb.y += orb.vy * dt;
+    // the board's edges
+    if (orb.x < R){ orb.x = R; orb.vx *= -.4; } if (orb.x > w - R){ orb.x = w - R; orb.vx *= -.4; }
+    if (orb.y < R){ orb.y = R; orb.vy *= -.4; } if (orb.y > h - R){ orb.y = h - R; orb.vy *= -.4; }
+    // walls: push the light out along the shortest axis and count the touch
+    rects.forEach(([X, Y, W, H]) => {
+      const nx = Math.max(X, Math.min(orb.x, X + W)), ny = Math.max(Y, Math.min(orb.y, Y + H));
+      const dx = orb.x - nx, dy = orb.y - ny, d = Math.hypot(dx, dy);
+      if (d < R){
+        if (d > 0){ orb.x = nx + dx / d * R; orb.y = ny + dy / d * R; if (Math.abs(dx) > Math.abs(dy)) orb.vx *= -.4; else orb.vy *= -.4; }
+        else { orb.y = Y - R; orb.vy = -Math.abs(orb.vy) * .4; }
+        if (now - lastHit > 450 && Math.hypot(orb.vx, orb.vy) > 40){ lastHit = now; touches++; sfx('bad'); haptic('tick'); setInfo(); }
+      }
+    });
+    motes.forEach(m => { if (!m.got && Math.hypot(m.x * w - orb.x, m.y * h - orb.y) < R + 10){ m.got = true; got++; sfx('p' + (got % 4)); haptic('tap'); setInfo(); } });
+    tiltBoard(g, w, h, L, col, motes, tt);
+    trail.push([orb.x, orb.y]); if (trail.length > 14) trail.shift();
+    trail.forEach(([x, y], i) => { g.globalAlpha = i / trail.length * .35; g.fillStyle = col; g.beginPath(); g.arc(x, y, R * (i / trail.length), 0, 6.283); g.fill(); });
+    g.globalAlpha = 1;
+    const og = g.createRadialGradient(orb.x, orb.y, 0, orb.x, orb.y, R * 3.2); og.addColorStop(0, 'rgba(255,248,230,1)'); og.addColorStop(.3, col + 'aa'); og.addColorStop(1, col + '00');
+    g.fillStyle = og; g.beginPath(); g.arc(orb.x, orb.y, R * 3.2, 0, 6.283); g.fill();
+    if (!done && Math.hypot(L.b[0] * w - orb.x, L.b[1] * h - orb.y) < 18){
+      done = true; stopGame(); haptic('win');
+      const pts = Math.max(60, 170 - touches * 12 + got * 25);
+      if (touches > 3){ S.clean = false; S.taskDirty = true; }
+      gameEnd(true, '', pts, touches <= 3 ? `The light arrives · ${got} of 3 motes` : `The light arrives, a little bruised`);
+      return;
+    }
+    raf = requestAnimationFrame(step);
+  };
+  raf = requestAnimationFrame(step);
+  setCleanup(() => { cancelAnimationFrame(raf); c.removeEventListener('pointerdown', pd); c.removeEventListener('pointermove', pm); c.removeEventListener('pointerup', pu); c.removeEventListener('pointercancel', pu); removeEventListener('keydown', kd); removeEventListener('keyup', ku); });
+}
+
+GAMEINIT.tilt = t => {
+  const L = TILT_LAYOUTS[t.layout] || TILT_LAYOUTS.field, { g, w, h } = setupCanvas('gc', L.h);
+  tiltBoard(g, w, h, L, TILT_COL[S.j] || '#F0D8C0', L.m.map(([x, y]) => ({ x, y })), 0);
+  drawStar(g, L.a[0] * w, L.a[1] * h, 9, 0);
+};
+GAME_TASKS.tilt = t => `<h2>The wandering light.</h2><p class="riddle" style="margin:0">${esc(t.prompt)}</p>
+    <p class="small" style="margin:0">Hold your phone flat, then tilt it to roll the light. On a computer, press and drag, or use the arrow keys. Gather the three motes on the way for bonus points.</p>
+    <div class="gamebar"><span>Motes <b id="gC">0</b> of 3</span><span>Wall touches <b id="gT">0</b></span></div>
+    <div class="gamebox"><canvas id="gc" style="touch-action:none"></canvas></div>
+    <div class="actions" id="gA"><button class="btn btn-gold" type="button" data-a="tilt-start">Release the light</button></div>`;

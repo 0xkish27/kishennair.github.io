@@ -6,7 +6,7 @@ import { S } from './state.js';
 import { nameOf } from './views.js';
 
 const hintBlock = t => S.hintShown?`<p class="hintbox" style="margin:0">${esc(t.hint)}</p>`:'';
-const hintBtn = t => t.hint && !S.hintShown ? `<button class="btn btn-ghost" type="button" data-a="hint">Use a hint (${S.hints} left · −30)</button>`:'';
+const hintBtn = t => t.hint && !S.hintShown ? `<button class="btn btn-ghost" type="button" data-a="hint">Use a hint (${S.hints} left · −${S.omen?.hintCost||30})</button>`:'';
 const revealBtn = () => S.wrong>=2 ? `<button class="btn btn-ghost" type="button" data-a="reveal">Reveal the answer (no points)</button>`:'';
 export const TASKS = {
   riddle:t=>`<h2>A riddle.</h2><p class="riddle" style="margin:0">${esc(t.prompt)}</p>${hintBlock(t)}

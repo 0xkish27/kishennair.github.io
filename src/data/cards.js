@@ -18,3 +18,10 @@ export const SECRETS=[
   {id:'veil',card:'The Veil Walker',em:'keyhole',frag:'Finish a season in the top ten.'}
 ];
 export const SAMPLE=[['Mei & Arjun',6840,31],['Hana & Iqbal',6215,29],['Clara & Wen',5990,27],['Daniel & Priya',4870,22],['Sara & Kenji',4310,20],['Farah & Leon',3905,18],['Joanne & Rizal',3440,15],['Nadia & Jun',2980,13],['Wei Ling & Haziq',2615,11],['Aisha & Marcus',2240,10]];
+
+/* boons: one is drawn face down after the prologue and bends the night in the couple's favour */
+export const BOONS = [
+  { id: 'flame', card: 'The Spare Flame', em: 'flame', frag: 'One more hint for tonight.' },
+  { id: 'key',   card: 'The Forgiving Key', em: 'keyhole', frag: 'Your first mistake tonight is forgiven.' },
+  { id: 'echo',  card: 'The Rising Echo', em: 'rings', frag: 'You begin the night already resonating, at ×1.5.' }
+];

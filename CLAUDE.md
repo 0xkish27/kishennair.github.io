@@ -29,14 +29,26 @@ Commands: `npm run dev`, `npm run build`, `npm run preview`.
 | `three/fog.js` | Raw WebGL fragment shader: raymarched colour-shifting fog tunnel plus the KL skyline (Petronas, KL Tower, Merdeka 118, Sultan Abdul Samad), blinking beacons and a monorail. Also tonight's moon phase |
 | `three/stage.js` | One fixed three.js canvas drawn over the page with scissor viewports: the 3D wax seal that shatters, and a landmark inside each mirror |
 | `three/relic.js` | A second three.js renderer with bloom for the landmark shown inside the game screens |
-| `ui/fx.js` | `sfx`, `toast`, glow bursts, scroll reveals, card tilt, mist-in text |
-| `game/state.js` | `S`: one object holding the whole play session; `fresh(id)` resets it. Also the HUD timer and the running mini game's cleanup (`setCleanup`, `stopGame`) |
+| `ui/fx.js` | `sfx`, `toast`, glow bursts, scroll reveals, card tilt, mist-in text, and the `--tx`/`--ty` CSS variables that lean `[data-tilt3d]` elements and the hero |
+| `ui/motion.js` | One tilt signal (`onTilt`): the phone's gyroscope when available (asked for on the first tap, as iOS requires), the pointer otherwise. Also `haptic()` |
+| `ui/ambience.js` | Generative WebAudio soundscape per journey (drone, city wind, distant bells), `swell()` on solves, `dread()` on mistakes, `chime()` when the relic is tapped. Off/on stored in `arc-sound` |
+| `game/nightly.js` | Tonight's Omen (a daily rule; Full and Dark Moon override it) and the Nightly Riddle with its streak, stored in `arc-nightly`. Nightly points count towards the season score |
+| `game/state.js` | `S`: one object holding the whole play session; `fresh(id)` resets it (any new per-run field must be reset there). Also the HUD timer, the running mini game's cleanup (`setCleanup`, `stopGame`) and `RES_MULT` |
 | `game/collection.js` | Card HTML, the on-device collection, season standings and `saveRun()` |
 | `game/shell.js` | The full-screen play overlay, top bar, HUD, `render()`, `go()`, `award()` and the route map |
 | `game/views.js` | `VIEWS`: brief → book → pay → register → seal → prologue → travel → checkin → task → card → final → ending → scrapbook |
 | `game/tasks.js` | `TASKS`: riddle, code, split, knowme, photo, dare, spend, blind, rate, purse, capsule, checklist, hum, simon |
-| `game/minigames.js` | `GAME_TASKS` and `GAMEINIT`: lightsout, beam, catchstars, constellation, memory, scale, rhythm. Canvas games register a cleanup with `setCleanup` |
+| `game/minigames.js` | `GAME_TASKS` and `GAMEINIT`: lightsout, beam, catchstars, constellation, memory, scale, rhythm, tilt (The Wandering Light: tilt, drag or arrow keys; layouts in `TILT_LAYOUTS`). Canvas games register a cleanup with `setCleanup` |
 | `game/flow.js` | `nextTask`, `solved`, `wrongAns`, and the single delegated click handler (`data-a` actions) |
+
+## Engagement systems
+
+- **Resonance:** each task solved without a hint, wrong answer or failed game raises `S.res` (0 to 4, multipliers in `RES_MULT`, up to ×2.2). Any slip calls `breakResonance()`. It drives the HUD bar, the relic's glow, bloom and spin, and the soundscape's brightness.
+- **Scoring:** `award()` multiplies by the omen and resonance; `solved()` also applies the omen's mini game bonus.
+- **Boons:** after the prologue the couple draws one of three face-down cards (`BOONS` in `data/cards.js`): an extra hint, one forgiven mistake, or starting resonance.
+- **Omens:** see `game/nightly.js`. Effects are read from `S.omen` (`mult`, `hints`, `hintCost`, `resStep`, `forgive`, `gameMult`, `swift`).
+- **Nightly Riddle:** on the landing page; streaks reward 40 to 100 season points a night.
+- **Feel:** the in-game seal is press-and-hold (Enter breaks it at once for keyboard users), screens surface from mist only when the step changes, and a whisper of the stop's lore fades in while travelling.
 
 To add a stop or a challenge, edit the `J` data. A new challenge type needs an entry in `TASKS` (or `GAME_TASKS` if it is a mini game), a `case` in the click handler in `game/flow.js`, and a `GAMEINIT` entry if it uses a canvas.
 

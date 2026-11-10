@@ -24,13 +24,14 @@
   <div class="wrap">
     <a class="logo" href="#top"><svg aria-hidden="true"><use href="#sigil"/></svg>ARCANUM</a>
     <nav class="nav-links" aria-label="Main">
-      <a href="#doors">Journeys</a><a href="#how">How it works</a><a href="#decks">The decks</a><a href="#arcana">Leaderboard</a><a href="#purse">Budget</a>
+      <a href="#tonight-sec">Tonight</a><a href="#doors">Journeys</a><a href="#how">How it works</a><a href="#decks">The decks</a><a href="#arcana">Leaderboard</a><a href="#purse">Budget</a>
+      <span id="navSound"></span>
       <button class="btn btn-ghost" type="button" data-open="lantern" style="padding:10px 18px">Play a journey</button>
     </nav>
   </div>
 </header>
 
-<div class="hudline band" aria-hidden="true"><div class="wrap"><span class="live">The veil is thin tonight</span><span>Moon over KL <b id="moonpct">—</b></span><span>Journeys open <b>4</b></span><span>Seekers per journey <b>2</b></span></div></div>
+<div class="hudline band" aria-hidden="true"><div class="wrap"><span class="live">The veil is thin tonight</span><span>Moon over KL <b id="moonpct">—</b></span><span>Tonight's omen <b id="omenName">—</b></span><span>Journeys open <b>4</b></span><span>Seekers per journey <b>2</b></span></div></div>
 <main id="top">
   <section class="hero band" aria-labelledby="h1">
     <div class="wrap">
@@ -53,6 +54,17 @@
         <div class="burst"></div>
         <span class="seal-note">Press the seal</span>
       </div>
+    </div>
+  </section>
+
+  <section class="sec band tonight-sec" id="tonight-sec" aria-labelledby="tonight-t">
+    <div class="wrap">
+      <div class="head">
+        <p class="sc eyebrow">tonight, and only tonight</p>
+        <h2 id="tonight-t">The night changes. <em>So do the rules.</em></h2>
+        <p class="lede">Every evening brings a new omen that bends how the journeys play, and a new riddle anyone can answer from here. Answer it on consecutive nights to build your streak and climb the season standings.</p>
+      </div>
+      <div class="tonight" id="tonight"></div>
     </div>
   </section>
 

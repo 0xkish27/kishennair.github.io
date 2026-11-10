@@ -2,8 +2,8 @@
 import { esc } from '../lib/util.js';
 import { em } from '../data/emblems.js';
 import { J } from '../data/journeys.js';
-import { DECKS, LEG } from '../data/cards.js';
-import { S, clearTimer } from './state.js';
+import { DECKS, LEG, BOONS } from '../data/cards.js';
+import { S, clearTimer, RES_MULT } from './state.js';
 import { stopCard, legCard, cardHTML, saveRun } from './collection.js';
 import { go, render, mapSVG, gmaps, elapsed } from './shell.js';
 import { TASKS } from './tasks.js';
@@ -23,6 +23,7 @@ export const VIEWS = {
     <div class="statgrid"><div><span class="lbl">Walk</span><b>${j.walk}</b></div><div><span class="lbl">Time</span><b>${j.time}</b></div><div><span class="lbl">Spend on the night</span><b>${j.spend}</b></div><div><span class="lbl">Stops</span><b>${j.stops.length} sealed</b></div></div>
     <div class="panel"><span class="lbl">Your route</span><div style="margin-top:10px">${mapSVG(false)}</div>
       <ul class="stops" style="margin-top:14px">${j.stops.map((s,i)=>`<li class="${i===0?'known':''}">${i===0?esc(s.place):'Sealed until you get there'}</li>`).join('')}</ul></div>
+    ${S.omen?`<div class="panel hi omen-mini"><span class="omen-ic" aria-hidden="true">${em(S.omen.em,2)}</span><div><span class="lbl">Tonight's omen</span><h3 style="margin-top:4px;font-size:1.3rem">${esc(S.omen.name)}</h3><p class="small" style="margin:4px 0 0">${esc(S.omen.line)}</p></div></div>`:''}
     <div class="panel"><span class="lbl">Getting there</span><p style="margin:8px 0 0">Start at <b>${esc(j.start)}</b>. Finish near <b>${esc(j.end)}</b>.</p><p class="small" style="margin:8px 0 0">${esc(j.best)}. GOKL city buses are free for Malaysians.</p></div>
     <div class="panel"><span class="lbl">Bring</span><p style="margin:8px 0 0">Both phones, charged. Comfortable shoes. ${j.purse?`RM ${j.purse} for food tasks, tracked in the game.`:'Nothing else. Everything on this route is free.'}</p></div>
     <div class="actions"><button class="btn btn-gold" type="button" data-a="to-book">Begin the journey · RM ${j.ticket}</button></div>`; },
@@ -66,20 +67,31 @@ export const VIEWS = {
     <p class="sc" style="margin:0;text-align:center">for ${esc(S.names.a.toLowerCase())} &amp; ${esc(S.names.b.toLowerCase())}</p>
     <h2 style="text-align:center">Your letter <em>has arrived.</em></h2>
     <p class="lede" style="text-align:center;margin:0 auto">Break the seal together when you are standing at ${esc(J[S.j].start)}.</p>
-    <button class="bigseal" type="button" data-a="break" aria-label="Break the seal"><div class="burst"></div><svg class="half l" viewBox="0 0 200 200"><use href="#waxseal"/></svg><svg class="half r" viewBox="0 0 200 200"><use href="#waxseal"/></svg></button>
-    <p style="text-align:center;font-family:var(--f-accent);font-style:italic;color:var(--candle-hi);margin:0">Press the seal</p>`; },
+    <button class="bigseal" type="button" data-a="break" aria-label="Break the seal. Press and hold, or press Enter"><div class="burst"></div><svg class="half l" viewBox="0 0 200 200"><use href="#waxseal"/></svg><svg class="half r" viewBox="0 0 200 200"><use href="#waxseal"/></svg>
+      <svg class="cracks" viewBox="0 0 200 200" aria-hidden="true"><path pathLength="1" d="M100 100L92 70 98 46 88 18"/><path pathLength="1" d="M100 100l26-14 22 6 30-12"/><path pathLength="1" d="M100 100l10 30-8 22 6 34"/><path pathLength="1" d="M100 100L70 112l-24-4-30 14"/><path pathLength="1" d="M100 100l22 22 26 4"/><path pathLength="1" d="M100 100L76 80 52 82"/></svg>
+      <span class="seal-glow" aria-hidden="true"></span></button>
+    <p id="sealHint" style="text-align:center;font-family:var(--f-accent);font-style:italic;color:var(--candle-hi);margin:0">Press and hold the seal</p>`; },
 
   prologue(){ const j=J[S.j]; return `
     <div class="relic-stage" data-relic></div>
     <div class="letter"><div class="to">To ${esc(S.names.a)} and ${esc(S.names.b)},</div>${j.prologue.map(p=>`<p>${esc(p)}</p>`).join('')}<p class="sign">The Keepers of Arcanum</p></div>
     <div class="panel"><span class="lbl">How to play</span><p class="small" style="margin:8px 0 0">Solve the riddle to find each place, check in together, then break its locks. Each stop gives you a card and a letter. You have three hints, and each one costs points.</p></div>
-    <div class="actions"><button class="btn btn-gold" type="button" data-a="begin">Begin the journey</button></div>`; },
+    <div class="actions"><button class="btn btn-gold" type="button" data-a="to-boon">Draw your boon</button></div>`; },
+
+  boon(){ if(!S.boonOrder){ const a=[...BOONS]; for(let i=a.length-1;i>0;i--){const k=Math.floor(Math.random()*(i+1));[a[i],a[k]]=[a[k],a[i]];} S.boonOrder=a; }
+    const chosen=S.boon; return `
+    <p class="sc" style="margin:0;text-align:center">before you set out</p>
+    <h2 style="text-align:center">Draw <em>one boon.</em></h2>
+    <p class="lede" style="text-align:center;margin:0 auto">Three cards lie face down. Each one bends the night a little in your favour. Choose together. You only get one.</p>
+    <div class="boons ${chosen?'chosen':''}">${S.boonOrder.map(B=>`<div class="boon ${chosen===B.id?'pick':''}" data-a="boon" data-v="${B.id}">${cardHTML(S.deck,'a boon for tonight',B,'Boon',132,chosen?'':'flip','')}</div>`).join('')}</div>
+    ${chosen?`<p class="small" style="text-align:center;margin:0">You drew <b style="color:var(--candle-hi)">${esc(BOONS.find(b=>b.id===chosen).card)}</b>. ${esc(BOONS.find(b=>b.id===chosen).frag)}</p><div class="actions"><button class="btn btn-gold" type="button" data-a="begin" autofocus>Begin the journey</button></div>`:'<p class="small" style="text-align:center;margin:0">Tap a card to turn it.</p>'}`; },
 
   travel(){ const s=curStop(), j=J[S.j], shown=S.sub==='shown'; return `
     <div class="relic-stage" data-relic></div>
     <p class="sc" style="margin:0">find the next place</p>
     <p class="riddle" style="margin:0">${esc(s.find)}</p>
     ${mapSVG(false)}
+    <p class="whisper" aria-live="polite"><span>a whisper on the wind</span>${esc(s.frag)}</p>
     ${shown?`<div class="panel hi"><span class="lbl">The place</span><h3 style="margin-top:6px">${esc(s.place)}</h3><p style="margin:10px 0 0"><a class="txt-btn" href="${gmaps(s.q)}" target="_blank" rel="noopener">Open in Google Maps</a></p></div>`:''}
     <div class="actions">
       <button class="btn btn-gold" type="button" data-a="checkin">We are here</button>
@@ -110,7 +122,7 @@ export const VIEWS = {
     <div class="relic-stage" data-relic></div>
     <p class="sc" style="margin:0">the final lock</p><h2>Speak the <em>word.</em></h2>
     <p class="riddle" style="margin:0">${esc(j.wordRiddle)}</p>
-    <div class="tiles" aria-label="Your answer">${j.word.split('').map((_,i)=>`<span class="slot ${done?'ok':''}">${placed[i]||''}</span>`).join('')}</div>
+    <div class="tiles" aria-label="Your answer">${j.word.split('').map((_,i)=>`<span class="slot ${done?'ok':''}" style="--i:${i}">${placed[i]||''}</span>`).join('')}</div>
     <div class="tiles">${S.scr.map((l,i)=>`<button type="button" class="tile ${S.picked.includes(i)?'used':''}" data-a="tile" data-v="${i}">${l}</button>`).join('')}</div>
     <div class="actions">${done?'<button class="btn btn-gold" type="button" data-a="ending" autofocus>Open the last door</button>':'<button class="btn btn-ghost" type="button" data-a="tiles-reset">Clear and try again</button>'}</div>`; },
 
@@ -124,7 +136,7 @@ export const VIEWS = {
 
   scrapbook(){ const j=J[S.j]; clearTimer(); const run=saveRun(); const lvl=S.points>=900?'Keepers of the Veil':S.points>=600?'Seasoned Wanderers':'New Wanderers'; return `
     <div style="text-align:center"><p class="sc" style="margin:0">the scrapbook of</p><h2 style="margin-top:6px">${esc(S.names.a)} &amp; <em>${esc(S.names.b)}</em></h2><p class="small" style="margin:6px 0 0">${esc(j.name)} · ${days()[S.date]} · Level: ${lvl}</p></div>
-    <div class="statgrid"><div><span class="lbl">Time</span><b>${S.final||elapsed()}</b></div><div><span class="lbl">Points</span><b>${S.points}</b></div><div><span class="lbl">Cards</span><b>${S.cards.length} of ${j.stops.length}</b></div><div><span class="lbl">${j.purse?'Spent of RM '+j.purse:'Spent'}</span><b>RM ${S.spent}</b></div></div>
+    <div class="statgrid"><div><span class="lbl">Time</span><b>${S.final||elapsed()}</b></div><div><span class="lbl">Points</span><b>${S.points}</b></div><div><span class="lbl">Cards</span><b>${S.cards.length} of ${j.stops.length}</b></div><div><span class="lbl">${j.purse?'Spent of RM '+j.purse:'Spent'}</span><b>RM ${S.spent}</b></div><div><span class="lbl">Peak resonance</span><b>×${RES_MULT[S.peakRes||0]}</b></div><div><span class="lbl">Played under</span><b style="font-size:1rem">${esc(S.omen?S.omen.name:'·')}</b></div></div>
     <div class="panel"><span class="lbl">Your cards · ${DECKS.find(d=>d[0]===S.deck)[1]} deck</span><div class="thumbs" style="margin-top:14px">${S.legend?legCard(S.j,110):''}${S.cards.map(i=>stopCard(S.j,i,110,'',S.rares.includes(i)?'rare':'')).join('')||'<p class="small">No cards yet.</p>'}</div></div>
     <div class="panel hi"><span class="lbl">Season I standing</span><div class="statgrid" style="margin-top:10px"><div><span class="lbl">Season points</span><b>${run.score.toLocaleString('en-US')}</b></div><div><span class="lbl">Rank</span><b>${run.rank?'#'+run.rank:'·'}</b></div></div>
       ${run.newSecrets.length?`<p class="sc" style="margin:14px 0 8px">secret card unlocked</p><div class="thumbs">${run.newSecrets.map(x=>cardHTML(S.deck,'secret card',x,'Secret',110,'','legendary')).join('')}</div>`:''}

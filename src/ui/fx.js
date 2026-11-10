@@ -1,5 +1,6 @@
 /* sound, toasts, glow bursts, scroll reveals and the mist-in text effect */
 import { $, reduce } from '../lib/util.js';
+import { onTilt } from './motion.js';
 
 export function burst(x,y,n=50,spread=160){ if(reduce) return; const d=document.createElement('span'); const sz=spread*2.4; d.style.cssText=`position:fixed;left:${x-sz/2}px;top:${y-sz/2}px;width:${sz}px;height:${sz}px;border-radius:50%;pointer-events:none;z-index:95;background:radial-gradient(circle,rgba(255,248,225,.55),rgba(200,68,63,.18) 35%,rgba(200,68,63,0) 68%)`; document.body.appendChild(d);
   d.animate([{transform:'scale(.2)',opacity:0},{transform:'scale(.7)',opacity:1,offset:.25},{transform:'scale(1.15)',opacity:0}],{duration:1800,easing:'cubic-bezier(.2,.7,.2,1)'}).onfinish=()=>d.remove(); }
@@ -28,6 +29,7 @@ let toastT;
 export function toast(msg){ const t=$('#toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('show'),2200); }
 
 export function initFx(){
+  if(!reduce){ let raf=0, tx=0, ty=0; onTilt((x,y)=>{ tx=x; ty=y; if(raf) return; raf=requestAnimationFrame(()=>{ raf=0; const r=document.documentElement.style; r.setProperty('--tx',tx.toFixed(3)); r.setProperty('--ty',ty.toFixed(3)); }); }); }
   setTimeout(armReveals,50);
   document.addEventListener('pointermove',e=>{ if(reduce) return; const c=e.target.closest&&e.target.closest('.tcard'); document.querySelectorAll('.tcard[data-tilted]').forEach(o=>{ if(o!==c){ o.style.transform=''; o.removeAttribute('data-tilted'); } }); if(!c||c.closest('.fan')) return; const r=c.getBoundingClientRect(), x=(e.clientX-r.left)/r.width, y=(e.clientY-r.top)/r.height; c.dataset.tilted=1; c.style.transform=`perspective(800px) rotateX(${(.5-y)*16}deg) rotateY(${(x-.5)*18}deg) translateZ(10px)`; c.style.setProperty('--gx',x*100+'%'); c.style.setProperty('--gy',y*100+'%'); },{passive:true});
   armDecrypt();

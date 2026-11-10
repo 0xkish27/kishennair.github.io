@@ -1,5 +1,6 @@
 /* volumetric fog: a raymarched tunnel of colour-shifting smoke and the KL skyline behind the whole site (raw WebGL) */
 import { $, reduce } from '../lib/util.js';
+import { onTilt } from '../ui/motion.js';
 
 const SYN=29.530588853;
 export const phase=(((Date.now()/864e5-Date.UTC(2000,0,6,18,14)/864e5)%SYN)+SYN)%SYN/SYN;
@@ -116,6 +117,8 @@ function drawCosmos(t){
   gl.drawArrays(gl.TRIANGLES,0,3);
 }
 addEventListener('pointermove',e=>{ mx=e.clientX/W; my=1-e.clientY/H; },{passive:true});
+// on phones the gyroscope steers the camera through the fog and pans the skyline
+onTilt((x,y,src)=>{ if(src==='gyro'){ mx=.5+x*.5; my=.5-y*.5; } });
 addEventListener('resize',()=>{ sizeCosmos(); drawCosmos(performance.now()); });
 sizeCosmos();
 if(reduce){ drawCosmos(6000); addEventListener('scroll',()=>drawCosmos(6000),{passive:true}); }

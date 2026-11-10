@@ -8,7 +8,9 @@ import { createStage } from './three/stage.js';
 import { initFx } from './ui/fx.js';
 import { initShell, openApp } from './game/shell.js';
 import { initFlow } from './game/flow.js';
+import { initMotion } from './ui/motion.js';
 
+initMotion();
 initLanding();
 initFog();
 

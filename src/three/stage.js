@@ -2,6 +2,7 @@
 import * as THREE from 'three';
 import { reduce } from '../lib/util.js';
 import { buildLandmark, animateLandmark } from './landmarks.js';
+import { onTilt } from '../ui/motion.js';
 
 export function createStage(){
   const T=THREE; let R;
@@ -16,6 +17,8 @@ export function createStage(){
   const items=[];
   const P={x:0,y:0};
   addEventListener('pointermove',e=>{ P.x=e.clientX; P.y=e.clientY; },{passive:true});
+  // tilting the phone turns the seal and the relics as if the pointer moved
+  onTilt((x,y,src)=>{ if(src==='gyro'){ P.x=innerWidth*(.5+x*.5); P.y=innerHeight*(.38+y*.5); } });
 
   /* the seal: nine wax wedges that fly apart */
   function sealScene(el){

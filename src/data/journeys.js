@@ -26,6 +26,7 @@ export const J = {
        find:'A field so wide the sky feels closer, with a flagpole so tall you have to lean back to see the top.',
        tasks:[
         {type:'code', prompt:'On this field a flag first rose at midnight, on the 31st of August. Enter the year.', code:'1957', hint:'Late 1950s.'},
+        {type:'tilt', layout:'field', prompt:'The last ember of the lamplighter\'s lantern is loose on the field. Carry it across the lawn to the flagpole without letting it touch the hedges.'},
         {type:'knowme', who:'b', key:'firstDate', prompt:'The lock only opens for someone who was paying attention. Where was your first date? Type what your person answered.'}
        ]},
       {name:'The Keeper of Markets', place:'Central Market (Pasar Seni)', q:'Central Market Kuala Lumpur', x:.5,y:.6, em:'scales', letter:'E', card:'The Market Keeper', frag:'Everything here has a price, except what you came with.',
@@ -144,6 +145,7 @@ export const J = {
       {name:'The Noisy Crossing', place:'Bukit Bintang junction', q:'Bukit Bintang junction Kuala Lumpur', x:.44,y:.66, em:'rings', letter:'E', card:'The Loud Crossing', frag:'The loudest corner hides the softest echo.',
        find:'Stand where four roads meet and a train glides overhead. Close your eyes for ten seconds and just listen.',
        tasks:[
+        {type:'tilt', layout:'lanes', prompt:'An echo is lost between the traffic lanes. Roll it through the gaps to the quiet corner where it can be heard.'},
         {type:'checklist', prompt:'Sound hunt. Tick each one when you both hear it. You need four of five.', items:['A train passing overhead','A street performer','Someone laughing','A car horn','Music from a shop'], need:4}
        ]},
       {name:'The Wandering Song', place:'Bukit Bintang walkway', q:'Bukit Bintang walk Kuala Lumpur', x:.6,y:.48, em:'note', letter:'C', card:'The Wandering Song', frag:'A song sung for strangers is still a gift.',

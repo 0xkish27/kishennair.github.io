@@ -5,6 +5,7 @@ import { J } from '../data/journeys.js';
 import { LEG, SECRETS, SAMPLE } from '../data/cards.js';
 import { S } from './state.js';
 import { renderArcana, renderBoard } from '../landing.js';
+import { nightlyPoints } from './nightly.js';
 
 export function cardHTML(deck, kicker, c, label, w=210, cls='', rar=''){
   return `<button type="button" class="tcard ${cls} ${rar}" data-deck="${deck}" style="--w:${w}px" aria-label="${esc(c.card)} card${rar?', '+rar:''}">
@@ -18,7 +19,7 @@ export const legCard=(id,w,cls='')=>cardHTML(S.deck,J[id].name,LEG[id],'Legendar
 export const blankColl=()=>({c:[],r:[],l:[],x:[],best:{}});
 export function loadColl(){ try{ const o=JSON.parse(localStorage.getItem('arc-coll')); return o&&o.c?o:blankColl(); }catch(e){ return blankColl(); } }
 export function saveColl(o){ try{ localStorage.setItem('arc-coll',JSON.stringify(o)); }catch(e){} }
-export const scoreOf=o=>Object.values(o.best).reduce((a,b)=>a+b,0)+25*o.c.length+75*o.r.length+300*o.l.length;
+export const scoreOf=o=>Object.values(o.best).reduce((a,b)=>a+b,0)+25*o.c.length+75*o.r.length+300*o.l.length+nightlyPoints();
 export function standings(){
   const o=loadColl(), me=scoreOf(o), names=store.get('arc-names','You two');
   const rows=SAMPLE.map(([n,p,c])=>({n,p,c}));
