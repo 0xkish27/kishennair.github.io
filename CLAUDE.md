@@ -24,10 +24,16 @@ Commands: `npm run dev`, `npm run build`, `npm run preview`.
 | `data/emblems.js` | Line-art SVG icons used on cards and mirrors (`EM`, `em()`) |
 | `data/journeys.js` | `J`: the four journeys as data. Each has stops, and each stop has `tasks` |
 | `data/cards.js` | `DECKS`, `LEG` (legendaries), `SECRETS`, `SAMPLE` leaderboard couples |
-| `landing.js` | Renders the journey mirrors, card decks, collection, leaderboard and Keys; the hero seal |
+| `landing.js` | Renders the flight's chapters (opening line, one card per journey, closing view), card decks, collection, leaderboard and Keys. Every `data-open` goes through the portal dive |
 | `three/landmarks.js` | `buildLandmark()` makes the glass-and-brass 3D landmark for each journey |
-| `three/fog.js` | Raw WebGL fragment shader: raymarched colour-shifting fog tunnel plus the KL skyline (Petronas, KL Tower, Merdeka 118, Sultan Abdul Samad), blinking beacons and a monorail. Also tonight's moon phase |
-| `three/stage.js` | One fixed three.js canvas drawn over the page with scissor viewports: the 3D wax seal that shatters, and a landmark inside each mirror |
+| `three/fog.js` | Tonight's moon phase (`phase`, `illum`) and `fogBurst()`, a pulse the 3D world flares on |
+| `three/world/world.js` | **The landing page is a 3D world.** Gate (hold the 3D seal) → camera dives through clouds → scroll flies along `CAM`/`LOOK` keyframes to four portals (`PORTALS`), pausing at each chapter (`SK`/`UK` map scroll to flight). Touching a portal or any Begin button dives through it (`dive()`), then opens the journey. Pauses rendering while the game overlay is open |
+| `three/world/city.js` | `KL` landmark coordinates; instanced buildings with window shader (kept below the flight path by `ceiling()`), wet reflective streets, traffic, River of Life, monorail, Bukit Bintang screens, Saloma Link, beacons and motes |
+| `three/world/skyline.js` | Petronas Twin Towers, KL Tower, Merdeka 118, Sultan Abdul Samad and Dataran Merdeka, lit by one pattern shader (`litMat`) |
+| `three/world/sky.js` | Star dome with tonight's real moon phase, and two cloud layers lit red from below |
+| `three/world/portals.js` | The four portal mirrors: seamless vortex shader, brass rim, light studs, orbiting shards |
+| `three/world/seal.js` | The 3D wax seal at the gate: cracks open under a hold, then bursts |
+| `three/world/glsl.js` | Shared noise, height fog, and the film grade (ACES, crimson shadows, vignette, aberration, grain, flash) |
 | `three/relic.js` | A second three.js renderer with bloom for the landmark shown inside the game screens |
 | `ui/fx.js` | `sfx`, `toast`, glow bursts, scroll reveals, card tilt, mist-in text, and the `--tx`/`--ty` CSS variables that lean `[data-tilt3d]` elements and the hero |
 | `ui/motion.js` | One tilt signal (`onTilt`): the phone's gyroscope when available (asked for on the first tap, as iOS requires), the pointer otherwise. Also `haptic()` |
@@ -73,7 +79,8 @@ To add a stop or a challenge, edit the `J` data. A new challenge type needs an e
 
 - Payment, sign-in, GPS check-in and the partner's second phone are all simulated. Every screen has "Skip this step" for testing.
 - The collection and season score are stored in the viewer's browser (`localStorage`). The leaderboard couples are sample data.
-- Three WebGL layers run at once, so older phones may struggle. Lower `SC` in `sizeCosmos()` (`src/three/fog.js`) or the step count in the fog shader if needed.
+- The world renders the whole city with bloom. On phones it uses fewer buildings and cars and a lower pixel ratio (`low` in `world.js` and `city.js`); tune those first if a device struggles. Without WebGL the chapters fall back to a plain stacked page.
+- The gate shows once per browser session (`arc-entered` in sessionStorage).
 
 ## Suggested next steps
 
@@ -86,4 +93,4 @@ To add a stop or a challenge, edit the `J` data. A new challenge type needs an e
 
 ## Testing
 
-Headless Chromium with `--use-gl=swiftshader --enable-webgl --ignore-gpu-blocklist` renders the WebGL layers. Swiftshader is slow, so 3D frames can lag behind the DOM in screenshots.
+Headless Chromium with `--use-gl=swiftshader --enable-webgl --ignore-gpu-blocklist` renders the WebGL layers. Swiftshader runs at a few frames per second, so wait several seconds after scrolling before a screenshot, and set `sessionStorage['arc-entered']='1'` (via an init script) to skip the gate in gameplay tests.

@@ -1,10 +1,7 @@
-/* Arcanum entry point. Boot order matches the original single-file prototype. */
+/* Arcanum entry point. */
 import './styles/main.css';
-import { $ } from './lib/util.js';
-import { J } from './data/journeys.js';
-import { initLanding, setSealBreaker } from './landing.js';
-import { initFog } from './three/fog.js';
-import { createStage } from './three/stage.js';
+import { initLanding, setDiveHook } from './landing.js';
+import { initWorld } from './three/world/world.js';
 import { initFx } from './ui/fx.js';
 import { initShell, openApp } from './game/shell.js';
 import { initFlow } from './game/flow.js';
@@ -12,14 +9,15 @@ import { initMotion } from './ui/motion.js';
 
 initMotion();
 initLanding();
-initFog();
 
-const Stage = createStage();
-if (Stage) {
-  document.body.classList.add('has3d');
-  setSealBreaker(Stage.seal($('#sealStage')));
-  document.querySelectorAll('#doorList .mirror').forEach((m, i) => Stage.relic(m, Object.keys(J)[i]));
-  Stage.start();
+// the 3D city; without WebGL the page falls back to a plain layout of the same chapters
+const world = initWorld();
+if (world){
+  world.onEnter(id => world.dive(id, () => openApp(id)));
+  setDiveHook((id, cb) => world.dive(id, cb));
+} else {
+  document.getElementById('gate')?.remove();
+  document.documentElement.classList.remove('gated');
 }
 
 initFx();

@@ -1,4 +1,4 @@
-/* the landing page: journey mirrors, card decks, collection, leaderboard, Keys and the hero seal */
+/* the landing page: the flight's chapters, card decks, collection, leaderboard and Keys */
 import { $, esc, store, reduce } from './lib/util.js';
 import { em } from './data/emblems.js';
 import { J } from './data/journeys.js';
@@ -13,7 +13,6 @@ import { startAmbience, swell } from './ui/ambience.js';
 import { haptic, requestMotion } from './ui/motion.js';
 import { soundBtn } from './game/shell.js';
 
-let breakSeal3D = null;
 
 export function renderArcana(){
   $('#fan').innerHTML=[stopCard('lantern',0,170,'hoverflip',''),stopCard('starfall',4,170,'hoverflip','rare'),legCard('lantern',190,'hoverflip'),stopCard('feast',1,170,'hoverflip','rare'),stopCard('echo',3,170,'hoverflip','')].join('');
@@ -50,16 +49,39 @@ export function renderDecks(){
     </div>`).join('');
 }
 
-function breakHero(){
-  const st=$('#sealStage'); if(st.classList.contains('broken')) return;
-  st.classList.add('broken'); sfx('crack'); haptic('crack'); requestMotion(); startAmbience('landing'); fogBurst(); if(breakSeal3D) breakSeal3D(); else burstAt($('#sealBtn'),90,200);
-  setTimeout(()=>{ document.getElementById('doors').scrollIntoView({behavior: reduce?'auto':'smooth'}); }, reduce?0:1900);
-  setTimeout(()=>st.classList.remove('broken'), 4200);
+/* the flight's chapters: an opening line, one card per journey (each beside its portal), and a closing view */
+const PORTAL_U={lantern:2/6,starfall:3/6,feast:4/6,echo:5/6};
+function renderChapters(){
+  const host=$('#chapters'); if(!host) return;
+  host.innerHTML=`
+    <div class="chapter ch-open" data-u="${1/6}">
+      <p class="sc">kuala lumpur · after dark</p>
+      <h1><span>Some doors</span><span>only open</span><span><em>for two.</em></span></h1>
+      <p class="lede">The city you know has a second face. Four doors are open tonight, each hidden above a landmark. Scroll to fly to them.</p>
+      <p class="scroll-cue" aria-hidden="true"><i></i>Scroll</p>
+    </div>`+Object.entries(J).map(([id,j])=>`
+    <div class="chapter ch-door" data-u="${PORTAL_U[id]}" style="--c:${j.hc}">
+      <div class="chapter-card">
+        <div class="ch-head"><span class="ch-em" aria-hidden="true">${em(j.em,1.8)}</span><div><p class="sc" style="margin:0">${esc(j.tag.toLowerCase())}</p><h2>${esc(j.name)}</h2></div></div>
+        <p class="ch-blurb">${esc(j.blurb)}</p>
+        <dl class="facts"><div><dt>Walk</dt><dd>${j.walk}</dd></div><div><dt>Time</dt><dd>${j.time}</dd></div><div><dt>Spend</dt><dd>${j.spend}</dd></div><div><dt>Difficulty</dt><dd><span class="diff">${[1,2,3,4,5].map(n=>`<i class="${n<=j.diff?'on':''}"></i>`).join('')}</span></dd></div></dl>
+        <div class="ch-foot"><button class="btn btn-gold" type="button" data-open="${id}">Step through · RM ${j.ticket}</button><span class="small">or touch the mirror</span></div>
+      </div>
+    </div>`).join('')+`
+    <div class="chapter ch-end" data-u="1">
+      <p class="sc">four doors, one night</p>
+      <h2>The veil is <em>already thin tonight.</em></h2>
+      <div class="ch-doors">${Object.entries(J).map(([id,j])=>`<button class="chip" type="button" data-open="${id}" style="--c:${j.hc}">${esc(j.name)}</button>`).join('')}</div>
+      <p class="small">Keep scrolling for tonight's omen, the cards and the season.</p>
+    </div>`;
 }
 
-export function setSealBreaker(fn){ breakSeal3D = fn || null; }
+let diveHook=null;
+export function setDiveHook(fn){ diveHook=fn; }
+const enter=id=>{ if(diveHook) diveHook(id,()=>openApp(id)); else openApp(id); };
 
 export function initLanding(){
+  renderChapters();
   $('#navSound').outerHTML = soundBtn();
   const on=$('#omenName'); if(on) on.textContent=omenTonight().name;
   initTonight((gain,streak,miss)=>{
@@ -67,27 +89,14 @@ export function initLanding(){
     sfx('ok'); haptic('win'); fogBurst(); startAmbience('landing'); swell(2); burstAt($('#tonight .nightly'),70,220);
     toast(`Solved · +${gain} season points · ${streak} ${streak===1?'night':'nights'} in a row`); renderArcana(); renderBoard();
   });
-$('#doorList').innerHTML = Object.entries(J).map(([id,j]) => `
-  <article class="door">
-    <div class="mirror" style="--c:${j.hc};--bf:${j.bf}" data-open="${id}" role="button" tabindex="0" aria-label="Open ${esc(j.name)}"><div class="mist m1"></div><div class="mist m2"></div><div class="em">${em(j.em,1.8)}</div><div class="glass"></div></div>
-    <div class="mstat" style="--c:${j.hc}"><span class="live">Open</span><span>Difficulty <span class="diff">${[1,2,3,4,5].map(n=>`<i class="${n<=j.diff?'on':''}"></i>`).join('')}</span></span></div>
-    <h3 data-decrypt>${esc(j.name)}</h3>
-    <p class="sc" style="margin:0" data-decrypt>${esc(j.tag)}</p>
-    <p>${esc(j.blurb)}</p>
-    <dl class="facts"><div><dt>Walk</dt><dd>${j.walk}</dd></div><div><dt>Time</dt><dd>${j.time}</dd></div><div><dt>Spend</dt><dd>${j.spend}</dd></div></dl>
-    <div class="door-foot"><span class="price">RM ${j.ticket} <small>per couple</small></span><button class="btn btn-gold" type="button" data-open="${id}" style="padding:10px 20px">Begin</button></div>
-  </article>`).join('');
   renderDecks(); renderArcana(); renderBoard(); renderKeys();
-document.addEventListener('click', e => {
-  const dp = e.target.closest('[data-deckpick]');
-  if (dp){ S.deck = dp.dataset.deckpick; store.set('arc-deck',S.deck); renderDecks(); renderArcana(); toast('Deck chosen: '+DECKS.find(d=>d[0]===S.deck)[1]); return; }
-  const tc = e.target.closest('.tcard');
-  if (tc) tc.classList.toggle('flip');
-  const op = e.target.closest('[data-open]');
-  if (op){ openApp(op.dataset.open); }
-});
-document.addEventListener('keydown', e => { if ((e.key==='Enter'||e.key===' ') && e.target.matches('.mirror')){ e.preventDefault(); openApp(e.target.dataset.open); } });
-  $('#sealBtn').addEventListener('click', breakHero);
-  $('#heroBreak').addEventListener('click', breakHero);
-  const mp=document.getElementById('moonpct'); if(mp) mp.textContent=illum<.04?'a new moon, darkest night':illum>.96?'full and bright':`${Math.round(illum*100)}% lit, ${phase<.5?'waxing':'waning'}`;
+  document.addEventListener('click', e => {
+    const dp = e.target.closest('[data-deckpick]');
+    if (dp){ S.deck = dp.dataset.deckpick; store.set('arc-deck',S.deck); renderDecks(); renderArcana(); toast('Deck chosen: '+DECKS.find(d=>d[0]===S.deck)[1]); return; }
+    const tc = e.target.closest('.tcard');
+    if (tc) tc.classList.toggle('flip');
+    const op = e.target.closest('[data-open]');
+    if (op && !op.closest('#app')){ requestMotion(); startAmbience('landing'); enter(op.dataset.open); }
+  });
+  const mp=document.getElementById('moonpct'); if(mp) mp.textContent=illum<.04?'new, the darkest night':illum>.96?'full and bright':`${Math.round(illum*100)}% lit and ${phase<.5?'waxing':'waning'}`;
 }

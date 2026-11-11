@@ -19,44 +19,32 @@
   </defs>
 </svg>
 
-<canvas id="cosmos" aria-hidden="true"></canvas>
 <header class="nav band">
   <div class="wrap">
     <a class="logo" href="#top"><svg aria-hidden="true"><use href="#sigil"/></svg>ARCANUM</a>
     <nav class="nav-links" aria-label="Main">
-      <a href="#tonight-sec">Tonight</a><a href="#doors">Journeys</a><a href="#how">How it works</a><a href="#decks">The decks</a><a href="#arcana">Leaderboard</a><a href="#purse">Budget</a>
+      <a href="#descent">Journeys</a><a href="#tonight-sec">Tonight</a><a href="#how">How it works</a><a href="#decks">The decks</a><a href="#arcana">Leaderboard</a><a href="#purse">Budget</a>
       <span id="navSound"></span>
       <button class="btn btn-ghost" type="button" data-open="lantern" style="padding:10px 18px">Play a journey</button>
     </nav>
   </div>
 </header>
 
-<div class="hudline band" aria-hidden="true"><div class="wrap"><span class="live">The veil is thin tonight</span><span>Moon over KL <b id="moonpct">—</b></span><span>Tonight's omen <b id="omenName">—</b></span><span>Journeys open <b>4</b></span><span>Seekers per journey <b>2</b></span></div></div>
+<div id="gate" aria-live="polite">
+  <div class="gate-top"><p class="sc">kuala lumpur · after dark</p><p class="gate-moon">The moon tonight is <b id="moonpct">·</b>. Tonight's omen: <b id="omenName">·</b></p></div>
+  <div class="gate-bottom">
+    <svg class="gate-ring" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="28"/><circle class="fill" cx="32" cy="32" r="28" pathLength="1"/></svg>
+    <p class="gate-cta">Press and hold the seal to enter</p>
+    <p class="gate-sub">Some doors only open for two. Sound on.</p>
+    <button class="txt-btn" type="button" id="gateEnter">Enter without breaking it</button>
+  </div>
+</div>
 <main id="top">
-  <section class="hero band" aria-labelledby="h1">
-    <div class="wrap">
-      <div class="hero-copy">
-        <p class="sc eyebrow">enter if you dare · kuala lumpur after dark</p>
-        <h1 id="h1"><span>Some doors</span><span>only open</span><span><em>for two.</em></span></h1>
-        <p class="lede">The city you know has a second face, and it only shows itself after dark. Solve its riddles, break its locks and earn its cursed cards. Some things here were sealed for a reason. Only two may enter.</p>
-        <div class="hero-cta">
-          <button class="btn btn-gold" type="button" id="heroBreak">Break the seal</button>
-          <a class="btn btn-ghost" href="#doors">Choose your journey</a>
-        </div>
-        <div class="hero-meta"><span>Play any evening</span><span>Under RM 40 for two, all in</span><span>No app to download</span></div>
-      </div>
-      <div class="seal-stage" id="sealStage">
-        <div class="halo"></div>
-        <button class="seal" type="button" id="sealBtn" aria-label="Break the seal">
-          <svg class="half l" viewBox="0 0 200 200"><use href="#waxseal"/></svg>
-          <svg class="half r" viewBox="0 0 200 200"><use href="#waxseal"/></svg>
-        </button>
-        <div class="burst"></div>
-        <span class="seal-note">Press the seal</span>
-      </div>
-    </div>
+  <section id="descent" aria-label="The journeys">
+    <div class="chapters" id="chapters"></div>
   </section>
 
+  <div class="codex">
   <section class="sec band tonight-sec" id="tonight-sec" aria-labelledby="tonight-t">
     <div class="wrap">
       <div class="head">
@@ -68,16 +56,6 @@
     </div>
   </section>
 
-  <section class="sec band" id="doors" aria-labelledby="doors-t">
-    <div class="wrap">
-      <div class="head">
-        <p class="sc eyebrow">the journeys</p>
-        <h2 id="doors-t">Four doors into the dark. <em>One of them is already calling you.</em></h2>
-        <p class="lede">Every journey runs through free public places, so the only thing you pay for is the adventure. Each one has its own story, its own riddles and its own deck of cards to earn.</p>
-      </div>
-      <div class="doors" id="doorList"></div>
-    </div>
-  </section>
 
   <section class="sec band" id="how" aria-labelledby="how-t">
     <div class="wrap">
@@ -168,6 +146,7 @@
       <button class="btn btn-gold" type="button" data-open="lantern">Begin with The Lantern Path</button>
     </div>
   </section>
+  </div>
 </main>
 
 <footer class="band"><div class="wrap"><span class="logo" style="font-size:1rem"><svg aria-hidden="true" style="width:24px;height:24px"><use href="#sigil"/></svg>ARCANUM</span><span>Kuala Lumpur · Prototype for review · No real payments or accounts</span></div></footer>
