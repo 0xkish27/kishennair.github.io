@@ -33,17 +33,17 @@ def fin(buf,name,fi=1.5,fo=3):
     w=wave.open(name,'wb');w.setnchannels(2);w.setsampwidth(2);w.setframerate(SR);w.writeframes((buf*32767).astype('<i2').tobytes());w.close()
 N=lambda m:440*2**((m-69)/12)
 np.random.seed(3)
-# 1) Intro: cinematic, slow piano-like arpeggios over pads (D major-ish), 34s
-D=34;b=np.zeros((SR*D,2))
+# 1) Intro: cinematic, slow piano-like arpeggios over pads (D major-ish), 39s
+D=39;b=np.zeros((SR*D,2))
 chords=[[50,57,62,66],[47,54,59,62],[43,50,55,59],[45,52,57,61]]
-for i in range(9):
+for i in range(11):
     c=chords[i%4];a=i*3.8;pad(b,[N(m) for m in c],a,a+4.6,.05)
     place(b,tone(N(c[0]-12),3.8,1.2),a,.18)
     for j,m in enumerate([c[1],c[2],c[3],c[2]+12,c[3],c[2]]):
         if a+j*.6<D-2:place(b,tone(N(m+12),2.5,3.2,'rich'),a+j*.6+.05,.07,(-.5+j*.2))
 fin(b,'m_intro.wav',2,3)
-# 2) Vertical: uptempo 104bpm, kick/hat, bass, stabs, 34s
-D=34;b=np.zeros((SR*D,2));bt=60/104
+# 2) Vertical: uptempo 104bpm, kick/hat, bass, stabs, 39s
+D=39;b=np.zeros((SR*D,2));bt=60/104
 prog=[[57,60,64],[53,57,60],[48,52,55],[55,59,62]]
 for bar in range(int(D/(bt*4))+1):
     c=prog[bar%4];a=bar*bt*4
