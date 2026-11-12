@@ -1,0 +1,56 @@
+<!doctype html><html><head><meta charset="utf-8">
+<style>
+@font-face{font-family:NR;src:url(node_modules/@fontsource/newsreader/files/newsreader-latin-400-normal.woff2);font-weight:400}
+@font-face{font-family:NR;src:url(node_modules/@fontsource/newsreader/files/newsreader-latin-300-italic.woff2);font-weight:300;font-style:italic}
+@font-face{font-family:SG;src:url(node_modules/@fontsource/schibsted-grotesk/files/schibsted-grotesk-latin-500-normal.woff2);font-weight:500}
+@font-face{font-family:SG;src:url(node_modules/@fontsource/schibsted-grotesk/files/schibsted-grotesk-latin-600-normal.woff2);font-weight:600}
+*{box-sizing:border-box;margin:0}
+html,body{width:1080px;height:1080px;overflow:hidden;background:#000;color:#fff;font-family:SG,Arial,sans-serif}
+#glow{position:absolute;inset:0;background:radial-gradient(55% 50% at 50% 45%,rgba(242,179,90,.10),transparent 70%)}
+.sc{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;text-align:center;padding:0 70px}
+.serif{font-family:NR,Georgia,serif;font-weight:400;letter-spacing:-.015em;line-height:1.08}
+.it{font-family:NR,Georgia,serif;font-style:italic;font-weight:300;color:#E6DCCB}
+.ln{display:block}
+.lab{font:600 22px/1 SG;letter-spacing:.3em;text-transform:uppercase;color:#8B8B93}
+#dots{display:grid;grid-template-columns:repeat(20,22px);gap:12px;margin-top:56px}
+#dots i{width:22px;height:22px;border-radius:6px;background:#2a2a2e}
+#s1 h1,#s2 h1,#s3 h1{font-size:104px}
+#s4 .q{position:relative;height:200px;width:100%}
+#s4 .q span{position:absolute;left:0;right:0;top:0;font-size:96px}
+#s4 .u{width:0;height:3px;background:linear-gradient(90deg,#F4A73C,#FCDDA6);margin:22px auto 0}
+#s5 h1{font-size:112px}
+.btn{margin-top:56px;font:600 34px/1 SG;color:#141009;padding:28px 50px;border-radius:18px;background:linear-gradient(100deg,#F4A73C,#F8C373 55%,#FCDDA6);box-shadow:0 18px 50px -14px rgba(244,167,60,.6)}
+.foot{margin-top:36px;font:500 28px/1 SG;color:#8B8B93}.foot b{color:#fff;font-weight:600}
+.mark{margin-bottom:46px}
+#fade{position:absolute;inset:0;background:#000;opacity:0}
+</style></head><body><div id="glow"></div>
+<div class="sc" id="s1"><h1 class="serif"><span class="ln" id="a1"><span id="cnt">0</span> cold DMs.</span><span class="ln it" id="a2">2 replies.</span></h1><div id="dots"></div></div>
+<div class="sc" id="s2"><h1 class="serif"><span class="ln" id="b1">The right people</span><span class="ln it" id="b2">don’t answer strangers.</span></h1></div>
+<div class="sc" id="s3"><svg class="mark ln" id="c0" width="170" height="170" viewBox="0 0 64 64" fill="none"><defs><radialGradient id="xmGl"><stop offset="0" stop-color="#F2B35A" stop-opacity=".55"/><stop offset="1" stop-color="#F2B35A" stop-opacity="0"/></radialGradient><linearGradient id="xmGd" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FCDDA6"/><stop offset=".55" stop-color="#F8C373"/><stop offset="1" stop-color="#F4A73C"/></linearGradient></defs><path d="M8.89 13.11 34.89 48.89" stroke="#F2B35A" stroke-opacity="0.41" stroke-width="1.1"/><path d="M11.78 18.22 37.78 43.78" stroke="#F2B35A" stroke-opacity="0.47" stroke-width="1.1"/><path d="M14.67 23.33 40.67 38.67" stroke="#F2B35A" stroke-opacity="0.53" stroke-width="1.1"/><path d="M17.56 28.44 43.56 33.56" stroke="#F2B35A" stroke-opacity="0.59" stroke-width="1.1"/><path d="M20.44 33.56 46.44 28.44" stroke="#F2B35A" stroke-opacity="0.65" stroke-width="1.1"/><path d="M23.33 38.67 49.33 23.33" stroke="#F2B35A" stroke-opacity="0.71" stroke-width="1.1"/><path d="M26.22 43.78 52.22 18.22" stroke="#F2B35A" stroke-opacity="0.77" stroke-width="1.1"/><path d="M29.11 48.89 55.11 13.11" stroke="#F2B35A" stroke-opacity="0.83" stroke-width="1.1"/><path d="M6 8 32 54M58 8 32 54" stroke="#fff" stroke-width="3.2" stroke-linecap="round"/><circle cx="32" cy="54" r="10" fill="url(#xmGl)"/><circle cx="32" cy="54" r="4" fill="url(#xmGd)"/></svg><h1 class="serif"><span class="ln" id="c1">They answer</span><span class="ln it" id="c2">a warm intro.</span></h1></div>
+<div class="sc" id="s4"><div class="lab ln" id="d0" style="margin-bottom:54px">Need</div><div class="q" id="q"></div><div class="u" id="u"></div></div>
+<div class="sc" id="s5"><div class="lab ln" id="e0" style="margin-bottom:40px">Vertex advisory</div><h1 class="serif"><span class="ln" id="e1">Anyone in Web3.</span><span class="ln it" id="e2">One intro away.</span></h1><div class="btn ln" id="e3">Apply for an intro</div><div class="foot ln" id="e4">Free to join · <b>vertexadvisory.com</b></div></div>
+<div id="fade"></div>
+<script>
+const $=id=>document.getElementById(id);const cl=v=>Math.max(0,Math.min(1,v)),eo=v=>1-Math.pow(1-cl(v),3);const p=(t,a,b)=>cl((t-a)/(b-a));
+function rise(el,k,dy=40){el.style.opacity=k;el.style.transform=`translateY(${(1-k)*dy}px)`;el.style.filter=k<1?`blur(${(1-k)*8}px)`:'none'}
+function scene(id,t,a,b,fi=.4,fo=.4){const o=Math.min(p(t,a,a+fi),1-p(t,b-fo,b));$(id).style.opacity=(t<a||t>b)?0:o;return t>=a&&t<=b}
+const D=[];for(let i=0;i<200;i++){const e=document.createElement('i');$('dots').appendChild(e);D.push(e)}
+const win=new Set([57,143]);
+const Q=['a Tier 1 listing?','a market maker?','an auditor?','investors?','the right KOLs?','a launchpad?'];
+Q.forEach((q,i)=>{const s=document.createElement('span');s.className='serif'+(i%2?' it':'');s.textContent=q;$('q').appendChild(s)});
+const qs=[...$('q').children];
+function seek(t){
+  $('glow').style.opacity=.6+.4*Math.sin(t*.7);
+  if(scene('s1',t,0,4.6,.01)){rise($('a1'),eo(p(t,.1,.7)));const f=eo(p(t,.3,2.2));const n=Math.round(f*200);$('cnt').textContent=n;
+    D.forEach((d,i)=>{const on=i<n;const r=p(t,2.6,3.2);d.style.background=!on?'#1a1a1d':win.has(i)?(r>0?'#F2B35A':'#8B8B93'):(r>0?`rgba(139,139,147,${.85-.65*r})`:'#8B8B93');d.style.boxShadow=win.has(i)&&r>0?`0 0 ${18*r}px rgba(242,179,90,.9)`:'none'});
+    rise($('a2'),eo(p(t,2.6,3.2)),30)}
+  if(scene('s2',t,4.5,8.1)){rise($('b1'),eo(p(t,4.6,5.3)));rise($('b2'),eo(p(t,5.1,5.8)))}
+  if(scene('s3',t,8,12)){const k=eo(p(t,8.1,8.9));$('c0').style.opacity=k;$('c0').style.transform=`scale(${.7+.3*k})`;rise($('c1'),eo(p(t,8.5,9.2)));rise($('c2'),eo(p(t,9,9.7)))}
+  if(scene('s4',t,11.9,18.2)){rise($('d0'),eo(p(t,12,12.5)),20);const st=12.3,dur=.95;
+    qs.forEach((q,i)=>{const a=st+i*dur;const k=i===qs.length-1?eo(p(t,a,a+.3)):Math.min(eo(p(t,a,a+.3)),1-p(t,a+dur-.2,a+dur));q.style.opacity=k;q.style.transform=`translateY(${(1-eo(p(t,a,a+.3)))*50-(p(t,a+dur-.2,a+dur))*(i===qs.length-1?0:40)}px)`});
+    const ui=Math.floor((t-st)/dur),uk=(t-st)/dur-ui;$('u').style.width=(t<st?0:Math.min(1,uk*1.6)*420)+'px'}
+  if(scene('s5',t,18.1,23,.4,.01)){rise($('e0'),eo(p(t,18.2,18.8)),20);rise($('e1'),eo(p(t,18.4,19.2)));rise($('e2'),eo(p(t,18.9,19.7)));rise($('e3'),eo(p(t,19.6,20.3)),30);rise($('e4'),eo(p(t,20,20.7)),20)}
+  $('fade').style.opacity=p(t,22.3,23);
+}
+window.seek=seek;seek(0);
+</script></body></html>

@@ -1,0 +1,197 @@
+<title>Vertex Logo Options</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,300;1,6..72,400&family=Schibsted+Grotesk:wght@400;500;600;700&display=swap">
+<style>
+:root{--bg:#000;--card:#0B0B0C;--line:#232326;--fg:#fff;--mute:#8B8B93;--up:#F2B35A;color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font:16px/1.5 "Schibsted Grotesk",Arial,sans-serif;margin:0}
+.wrap{max-width:1180px;margin:0 auto;padding-block:72px 96px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1{font:400 clamp(40px,5.4vw,68px)/1.05 "Newsreader",Georgia,serif;letter-spacing:-.015em;margin:0;text-wrap:balance}
+h1 em{display:block;font-style:italic;font-weight:300;color:#E6DCCB}
+.intro{color:var(--mute);margin-top:18px;font-size:17px;max-width:60ch}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-top:52px}
+.opt{border:1px solid var(--line);border-radius:24px;background:var(--card);overflow:hidden;min-width:0;display:flex;flex-direction:column;transition:border-color .3s}
+.opt:hover{border-color:rgba(242,179,90,.45)}
+.stage{display:grid;place-items:center;padding:52px 20px 44px;border-bottom:1px solid var(--line);background:radial-gradient(60% 70% at 50% 40%,rgba(242,179,90,.08),transparent 70%);color:#fff;gap:34px}
+.hero-mark{width:132px;height:132px;display:block;transition:transform .6s cubic-bezier(.2,.8,.2,1)}
+.opt:hover .hero-mark{transform:scale(1.06)}
+.lockup{display:flex;align-items:center;gap:14px}
+.lockup svg{width:46px;height:46px;flex:none}
+.wm b{display:block;font:400 34px/1 "Newsreader",Georgia,serif;letter-spacing:-.01em}
+.wm span{display:block;font:600 9.5px/1 "Schibsted Grotesk",sans-serif;letter-spacing:.42em;color:var(--mute);margin-top:7px}
+.meta{padding:22px 26px 26px;display:flex;flex-direction:column;gap:8px}
+.tag{font:600 12px/1 "Schibsted Grotesk",sans-serif;letter-spacing:.08em;text-transform:uppercase;color:var(--up)}
+.meta h2{font:400 28px/1.1 "Newsreader",Georgia,serif;margin:4px 0 0}
+.meta p{color:var(--mute);margin:0;font-size:15px}
+.minis{display:flex;gap:12px;align-items:center;margin-top:12px;flex-wrap:wrap}
+.minis span{display:grid;place-items:center;width:52px;height:52px;border-radius:14px;border:1px solid var(--line);background:#000;color:#fff}
+.minis span.l{background:#F4F1EA;color:#0B0B0C;border-color:#F4F1EA}
+.minis span.r{border-radius:50%}
+.minis svg{width:30px;height:30px}
+.minis small{color:var(--mute);font-size:13px;margin-left:4px}
+@media (max-width:820px){.grid{grid-template-columns:1fr}}
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+<defs>
+<linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FCDDA6"/><stop offset=".55" stop-color="#F8C373"/><stop offset="1" stop-color="#F4A73C"/></linearGradient>
+<linearGradient id="goldv" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F2B35A" stop-opacity="0"/><stop offset="1" stop-color="#F2B35A"/></linearGradient>
+<linearGradient id="fadev" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="currentColor" stop-opacity=".15"/><stop offset="1" stop-color="currentColor" stop-opacity=".9"/></linearGradient>
+<radialGradient id="glow"><stop offset="0" stop-color="#F2B35A" stop-opacity=".55"/><stop offset="1" stop-color="#F2B35A" stop-opacity="0"/></radialGradient>
+<path id="crestpath" d="M32 32m-24 0a24 24 0 1 1 48 0a24 24 0 1 1-48 0"/>
+</defs>
+
+<!-- A Globe -->
+<symbol id="mA" viewBox="0 0 64 64" fill="none">
+<circle cx="32" cy="30" r="26" stroke="currentColor" stroke-opacity=".3" stroke-width="1.2"/>
+<path d="M7 23Q32 30 57 23M9 39Q32 44 55 39" stroke="currentColor" stroke-opacity=".18" stroke-width="1"/>
+<path d="M22 6.5Q25 33 32 53M42 6.5Q39 33 32 53" stroke="currentColor" stroke-opacity=".35" stroke-width="1.1"/>
+<path d="M12 14Q19 39 32 53Q45 39 52 14" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="32" cy="53" r="9" fill="url(#glow)"/><circle cx="32" cy="53" r="4" fill="url(#gold)"/>
+</symbol>
+
+<!-- B Gem -->
+<symbol id="mB" viewBox="0 0 64 64">
+<path d="M5 10h15l12 30z" fill="currentColor"/>
+<path d="M5 10l27 30v18z" fill="currentColor" fill-opacity=".62"/>
+<path d="M59 10H44L32 40z" fill="#FCDDA6"/>
+<path d="M59 10L32 40v18z" fill="url(#gold)"/>
+<path d="M32 40v18" stroke="#000" stroke-opacity=".25" stroke-width=".6"/>
+</symbol>
+
+<!-- C Network -->
+<symbol id="mC" viewBox="0 0 64 64" fill="none">
+<g stroke="currentColor" stroke-linecap="round">
+<path d="M8 10 20 31 32 53 44 31 56 10" stroke-width="2.6" stroke-linejoin="round"/>
+<path d="M20 31 32 14 44 31M8 10 32 14 56 10M20 31H44" stroke-opacity=".32" stroke-width="1.2"/>
+</g>
+<g fill="currentColor"><circle cx="8" cy="10" r="3"/><circle cx="56" cy="10" r="3"/><circle cx="20" cy="31" r="2.6"/><circle cx="44" cy="31" r="2.6"/><circle cx="32" cy="14" r="2.2" fill-opacity=".6"/></g>
+<circle cx="32" cy="53" r="10" fill="url(#glow)"/><circle cx="32" cy="53" r="4.6" fill="url(#gold)"/><circle cx="32" cy="53" r="7.5" stroke="#F2B35A" stroke-opacity=".5" stroke-width="1"/>
+</symbol>
+
+<!-- D Meeting point -->
+<symbol id="mD" viewBox="0 0 64 64" fill="none">
+<path d="M55 9 25 57" stroke="url(#gold)" stroke-width="7" stroke-linecap="round"/>
+<path d="M27.2 38.2 36.4 52.9" style="stroke:var(--cut,#000)" stroke-width="12" stroke-linecap="butt"/>
+<path d="M9 9 39 57" stroke="currentColor" stroke-width="7" stroke-linecap="round"/>
+</symbol>
+
+<!-- E Orbit -->
+<symbol id="mE" viewBox="0 0 64 64" fill="none">
+<ellipse cx="32" cy="34" rx="29" ry="10" transform="rotate(-18 32 34)" stroke="#F2B35A" stroke-opacity=".35" stroke-width="1.4"/>
+<path d="M12 10 32 52 52 10" stroke="currentColor" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M4.6 42.2A29 10 -18 0 0 59.4 25.8" transform="rotate(0)" stroke="url(#gold)" stroke-width="2.2" stroke-linecap="round"/>
+<circle cx="57.5" cy="24" r="3.4" fill="url(#gold)"/>
+</symbol>
+
+<!-- F Crest -->
+<symbol id="mF" viewBox="0 0 64 64" fill="none">
+<circle cx="32" cy="32" r="30.5" stroke="#F2B35A" stroke-width="1.2"/>
+<circle cx="32" cy="32" r="20" stroke="currentColor" stroke-opacity=".3" stroke-width=".9"/>
+<text font-family="Schibsted Grotesk, sans-serif" font-size="5.4" font-weight="600" fill="currentColor" fill-opacity=".8"><textPath href="#crestpath" startOffset="0" textLength="148" lengthAdjust="spacing">VERTEX · ADVISORY · WEB3 HUB ·</textPath></text>
+<text x="32" y="42" text-anchor="middle" font-family="Newsreader, Georgia, serif" font-style="italic" font-size="30" fill="currentColor">V</text>
+<circle cx="32" cy="44.5" r="2" fill="url(#gold)"/>
+</symbol>
+
+<!-- G Spotlight -->
+<symbol id="mG" viewBox="0 0 64 64" fill="none">
+<g stroke-linecap="round">
+<path d="M6 8 32 54M58 8 32 54" stroke="currentColor" stroke-width="3"/>
+<path d="M14.5 8 32 54M23 8 32 54M32 8v46M41 8 32 54M49.5 8 32 54" stroke="url(#goldv)" stroke-width="1.6"/>
+</g>
+<circle cx="32" cy="54" r="10" fill="url(#glow)"/><circle cx="32" cy="54" r="4" fill="url(#gold)"/>
+</symbol>
+
+<!-- H Diamond -->
+<symbol id="mH" viewBox="0 0 64 64" fill="none">
+<path d="M6 30 32 6 58 30" stroke="currentColor" stroke-opacity=".3" stroke-width="1.6" stroke-linejoin="round"/>
+<path d="M6 30 32 57 58 30" stroke="currentColor" stroke-width="3.6" stroke-linejoin="round" stroke-linecap="round"/>
+<g fill="currentColor"><circle cx="6" cy="30" r="3"/><circle cx="58" cy="30" r="3"/><circle cx="32" cy="6" r="2.4" fill-opacity=".5"/></g>
+<circle cx="32" cy="57" r="9" fill="url(#glow)"/><circle cx="32" cy="57" r="4.2" fill="url(#gold)"/>
+</symbol>
+<!-- I Tile -->
+<symbol id="mI" viewBox="0 0 64 64" fill="none">
+<rect x="4" y="4" width="56" height="56" rx="15" fill="url(#gold)"/>
+<path d="M17 19 32 46 47 19" stroke="#120d06" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M32 46V29" stroke="#120d06" stroke-opacity=".45" stroke-width="2.2" stroke-linecap="round"/>
+</symbol>
+<!-- J Coin -->
+<symbol id="mJ" viewBox="0 0 64 64" fill="none">
+<circle cx="32" cy="32" r="28" fill="url(#gold)"/>
+<circle cx="32" cy="32" r="25" stroke="#7a5520" stroke-width="1.8" stroke-dasharray="0.1 3.27" stroke-linecap="round"/>
+<circle cx="32" cy="32" r="21" stroke="#120d06" stroke-opacity=".25" stroke-width="1"/>
+<path d="M21 22 32 44 43 22" stroke="#120d06" stroke-width="4.6" stroke-linecap="round" stroke-linejoin="round"/>
+</symbol>
+<!-- K Chevrons -->
+<symbol id="mK" viewBox="0 0 64 64" fill="none" stroke-linecap="round" stroke-linejoin="round">
+<path d="M10 7 32 24 54 7" stroke="currentColor" stroke-opacity=".25" stroke-width="3.4"/>
+<path d="M10 20 32 37 54 20" stroke="currentColor" stroke-opacity=".6" stroke-width="3.8"/>
+<path d="M10 33 32 52 54 33" stroke="url(#gold)" stroke-width="5"/>
+</symbol>
+<!-- L Block -->
+<symbol id="mL" viewBox="0 0 64 64" fill="none">
+<path d="M32 4 56.2 18v28L32 60 7.8 46V18z" stroke="currentColor" stroke-opacity=".4" stroke-width="1.6" stroke-linejoin="round"/>
+<path d="M7.8 18 32 32 56.2 18M32 32v28" stroke="currentColor" stroke-opacity=".14" stroke-width="1.2"/>
+<path d="M17 21 32 47 47 21" stroke="currentColor" stroke-width="3.8" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="32" cy="47" r="8" fill="url(#glow)"/><circle cx="32" cy="47" r="3.8" fill="url(#gold)"/>
+</symbol>
+<!-- M Link -->
+<symbol id="mM" viewBox="0 0 64 64" fill="none">
+<rect x="18" y="8" width="14" height="44" rx="7" transform="rotate(-24 25 30)" stroke="currentColor" stroke-width="3.6"/>
+<rect x="32" y="8" width="14" height="44" rx="7" transform="rotate(24 39 30)" stroke="url(#gold)" stroke-width="3.6"/>
+</symbol>
+<!-- N Summit -->
+<symbol id="mN" viewBox="0 0 64 64" fill="none">
+<path d="M4 52h56" stroke="currentColor" stroke-opacity=".25" stroke-width="1.2" stroke-linecap="round"/>
+<path d="M17 52 32 34 47 52" stroke="currentColor" stroke-opacity=".35" stroke-width="1.6" stroke-linejoin="round"/>
+<path d="M6 52 32 14 58 52" stroke="currentColor" stroke-width="3.6" stroke-linejoin="round" stroke-linecap="round"/>
+<circle cx="32" cy="14" r="10" fill="url(#glow)"/><circle cx="32" cy="14" r="4.4" fill="url(#gold)"/>
+</symbol>
+<!-- O Compass -->
+<symbol id="mO" viewBox="0 0 64 64" fill="none">
+<circle cx="32" cy="32" r="21" stroke="currentColor" stroke-opacity=".25" stroke-width="1.2"/>
+<path d="M32 3 36 28 61 32 36 36H28L3 32 28 28z" fill="currentColor"/>
+<path d="M28 36 32 61 36 36z" fill="url(#gold)"/>
+<path d="M32 3 36 28 61 32 36 36 32 32z" fill="#000" fill-opacity=".22"/>
+<circle cx="32" cy="32" r="2.2" fill="#F2B35A"/>
+</symbol>
+<!-- P Signature -->
+<symbol id="mP" viewBox="0 0 64 64" fill="none">
+<text x="31" y="47" text-anchor="middle" font-family="Newsreader, Georgia, serif" font-style="italic" font-weight="400" font-size="54" fill="currentColor">V</text>
+<path d="M10 55Q32 47 56 51" stroke="url(#gold)" stroke-width="2.6" stroke-linecap="round"/>
+<circle cx="56" cy="51" r="2.6" fill="#F2B35A"/>
+</symbol>
+</svg>
+
+<div class="wrap">
+  <h1>Vertex logo options. <em>Sixteen directions.</em></h1>
+  <p class="intro">Each one keeps the gold point where everything meets. Every card shows the mark, the full lockup, and how it looks small as an X, Telegram or Instagram avatar, on dark and light.</p>
+  <div class="grid" id="grid"></div>
+</div>
+
+<script>
+const O=[
+['mA','A · Global','The Globe','A V drawn from the meridians of a globe, landing on one gold point. Worldwide reach and one hub in a single mark.'],
+['mB','B · Premium','The Gem','A cut-stone V made of four facets, half white and half gold. Feels valuable and solid, and reads clearly even at tiny sizes.'],
+['mC','C · Network','The Network','A V built from linked nodes, with every line running down to the gold hub. The clearest picture of what Vertex does.'],
+['mD','D · Bold','The Meeting Point','Two strokes from opposite sides cross at the bottom, one white and one gold. Two parties meeting through Vertex. Very modern and simple.'],
+['mE','E · Global','The Orbit','A V wrapped by a gold orbit with a satellite. Movement and global reach, with a slightly space-tech feel.'],
+['mF','F · Heritage','The Crest','A seal with the name running around the rim and a serif V in the middle. Feels like an established advisory firm or private bank.'],
+['mG','G · Focus','The Spotlight','Beams of light from every direction narrowing into one point. Everyone in Web3, focused into one intro.'],
+['mH','H · Premium','The Diamond','A V with a faint mirrored peak above it, forming a diamond. The bottom half carries the weight and the gold point.'],
+['mI','I · App icon','The Tile','A gold tile with a dark V cut into it. Made for app icons and profile pictures, where it stands out instantly in a feed.'],
+['mJ','J · Crypto','The Coin','A gold coin with a milled edge and a V stamped in the centre. Speaks crypto straight away.'],
+['mK','K · Motion','The Descent','Three stacked chevrons getting brighter as they fall, landing in gold. Momentum, and everything flowing to one place.'],
+['mL','L · Blockchain','The Block','A V set inside an isometric block. Blockchain-native, with the gold point where every side meets.'],
+['mM','M · Connection','The Link','Two chain links, one white and one gold, joined at the bottom into a V. Two sides linked through Vertex.'],
+['mN','N · Ambition','The Summit','Vertex means the highest point. A peak with a gold point at the top, like reaching the top of the market.'],
+['mO','O · Guidance','The Compass','A compass star whose south point is gold. Advisory, direction, and showing clients where to go next.'],
+['mP','P · Signature','The Signature','A handwritten-style serif V with a gold underline. Quiet and confident, like a founder’s signature on a deal.'],
+];
+const use=(id,c='')=>`<svg viewBox="0 0 64 64" class="${c}" aria-hidden="true"><use href="#${id}"/></svg>`;
+document.getElementById('grid').innerHTML=O.map(([id,tag,name,desc])=>`
+<div class="opt"><div class="stage">${use(id,'hero-mark')}<div class="lockup">${use(id)}<div class="wm"><b>Vertex</b><span>ADVISORY</span></div></div></div>
+<div class="meta"><span class="tag">Option ${tag}</span><h2>${name}</h2><p>${desc}</p>
+<div class="minis"><span>${use(id)}</span><span class="r">${use(id)}</span><span class="l">${use(id)}</span><small>Avatar sizes</small></div></div></div>`).join('');
+</script>
+<style>.stage{--cut:#0E0C0A}.minis span{--cut:#000}.minis span.l{--cut:#F4F1EA}</style>
