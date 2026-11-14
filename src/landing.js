@@ -50,7 +50,7 @@ export function renderDecks(){
 }
 
 /* the flight's chapters: an opening line, one card per journey (each beside its portal), and a closing view */
-const PORTAL_U={lantern:2/6,starfall:3/6,feast:4/6,echo:5/6};
+const PORTAL_U={lantern:2/6,echo:3/6,starfall:4/6,feast:5/6};   // the order the flight passes them
 function renderChapters(){
   const host=$('#chapters'); if(!host) return;
   host.innerHTML=`
@@ -59,7 +59,7 @@ function renderChapters(){
       <h1><span>Some doors</span><span>only open</span><span><em>for two.</em></span></h1>
       <p class="lede">The city you know has a second face. Four doors are open tonight, each hidden above a landmark. Scroll to fly to them.</p>
       <p class="scroll-cue" aria-hidden="true"><i></i>Scroll</p>
-    </div>`+Object.entries(J).map(([id,j])=>`
+    </div>`+Object.entries(J).sort((a,b)=>PORTAL_U[a[0]]-PORTAL_U[b[0]]).map(([id,j])=>`
     <div class="chapter ch-door" data-u="${PORTAL_U[id]}" style="--c:${j.hc}">
       <div class="chapter-card">
         <div class="ch-head"><span class="ch-em" aria-hidden="true">${em(j.em,1.8)}</span><div><p class="sc" style="margin:0">${esc(j.tag.toLowerCase())}</p><h2>${esc(j.name)}</h2></div></div>

@@ -21,13 +21,14 @@ import { sfx } from '../../ui/fx.js';
 
 const V = (x, y, z) => new THREE.Vector3(x, y, z);
 // the flight: where the camera is, and what it looks at, at each chapter
-const CAM  = [V(0, 205, 250), V(-34, 74, 176), V(-64, 23, 50), V(22, 30, -20), V(70, 20, 70), V(16, 36, 0), V(8, 100, 186)];
-const LOOK = [V(0, 168, -40), V(-8, 6, -10), V(-80, 14, 17), V(40, 25, -60), V(50, 11, 41), V(-6, 30, -27), V(0, 12, -40)];
+// one sweep across the city with no doubling back: west (Lantern) → centre (Echo) → north-east (Starfall) → south-east (Feast) → up over it all
+const CAM  = [V(0, 205, 250), V(-34, 74, 176), V(-64, 23, 50), V(16, 36, 0), V(22, 30, -20), V(70, 20, 70), V(8, 100, 186)];
+const LOOK = [V(0, 168, -40), V(-8, 6, -10), V(-80, 14, 17), V(-6, 30, -27), V(40, 25, -60), V(50, 11, 41), V(0, 12, -40)];
 export const PORTALS = [
   { id: 'lantern',  u: 2 / 6, pos: V(-79, 19, 18),  color: '#FFB65C' },
-  { id: 'starfall', u: 3 / 6, pos: V(35, 24, -46),  color: '#9FB0FF' },
-  { id: 'feast',    u: 4 / 6, pos: V(51, 16, 43),   color: '#FF6A78' },
-  { id: 'echo',     u: 5 / 6, pos: V(-5, 31, -25),  color: '#6FE6D0' }
+  { id: 'starfall', u: 4 / 6, pos: V(35, 24, -46),  color: '#9FB0FF' },
+  { id: 'feast',    u: 5 / 6, pos: V(51, 16, 43),   color: '#FF6A78' },
+  { id: 'echo',     u: 3 / 6, pos: V(-5, 31, -25),  color: '#6FE6D0' }
 ];
 // scroll (0..1 through the descent) → flight position, with pauses at every chapter
 const SK = [0, .06, .14, .22, .32, .40, .50, .58, .68, .76, .86, .94, 1];
