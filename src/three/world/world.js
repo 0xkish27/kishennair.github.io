@@ -120,10 +120,16 @@ export function initWorld(){
   /* ---------------- render loop ---------------- */
   const camPath = new THREE.CatmullRomCurve3(CAM, false, 'centripetal'), lookPath = new THREE.CatmullRomCurve3(LOOK, false, 'centripetal');
   const tmpL = new THREE.Vector3(), side = new THREE.Vector3(), upv = new THREE.Vector3(0, 1, 0);
-  let last = performance.now();
+  let last = performance.now(), frozen = false;
   function frame(now){
     requestAnimationFrame(frame);
-    if (document.hidden || document.body.classList.contains('app-open')) { last = now; return; }
+    if (document.body.classList.contains('app-open')){
+      // freeze on a clean, dimmed frame (never on the white of a portal flash) while the game is open
+      if (!frozen){ frozen = true; grade.uniforms.uFlash.value = 0; grade.uniforms.uDim.value = .82; composer.render(); }
+      last = now; return;
+    }
+    frozen = false;
+    if (document.hidden) { last = now; return; }
     const rawDt = Math.min(.3, (now - last) / 1000), dt = Math.min(.05, rawDt); last = now;
     U.uTime.value = now / 1000;
 
