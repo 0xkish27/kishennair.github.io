@@ -1,0 +1,25 @@
+# Teaser toolkit
+
+Cuts the 27-second vertical Arcanum teaser from six generated clips.
+
+1. Put the clips in a folder, named `1.mp4` … `6.mp4` (any format or size; they are reframed to 1080×1920).
+2. Render the titles and score, then assemble:
+
+```bash
+mkdir -p work
+python3 tools/teaser/score.py work/score.wav      # needs numpy
+node tools/teaser/titles.cjs work                  # needs Playwright (renders in the site fonts)
+python3 tools/teaser/assemble.py clips work arcanum-teaser.mp4   # needs ffmpeg
+```
+
+`timeline.json` holds the cut: shot lengths, dissolve length, and every title's text and timing. The score and
+titles read it too, so retiming a title or shot is one edit there followed by the three commands.
+
+| Shot | Prompt idea | Title |
+| --- | --- | --- |
+| 1 | Crimson wax seal with the twin towers, cracking, molten light | A seal was left for you / Break it together |
+| 2 | Descending through red-lit clouds onto the KL skyline | The city you know has a second face |
+| 3 | Drone glide over wet, misty KL at night | Four doors open tonight |
+| 4 | Golden portal above the Sultan Abdul Samad Building | A night made for two |
+| 5 | A couple walking a misty lane, a phone glowing | Only two may enter |
+| 6 | Push into a silver-blue portal before the Petronas Towers, into white | (end card follows) |
