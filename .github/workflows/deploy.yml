@@ -25,6 +25,9 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run build
+        env:
+          # the browser key for Google's 3D tiles (restricted to this site); without it the drawn city is used
+          VITE_GOOGLE_MAPS_KEY: ${{ secrets.GOOGLE_MAPS_KEY }}
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist

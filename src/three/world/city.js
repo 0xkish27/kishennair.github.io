@@ -210,3 +210,22 @@ export function buildCity(scene, U, low, ceiling = () => 1e9){
     }
   };
 }
+
+/* just the drifting motes of light, for use over the real city */
+export function buildAir(scene, U, low){
+  const R = rng(7), n = low ? 700 : 1500, pts = [], col = [], ids = [];
+  for (let i = 0; i < n; i++){ pts.push((R() - .5) * 340, 2 + R() * 100, (R() - .5) * 420 + 20); const w = R(); col.push(w < .6 ? 1.8 : .9, w < .6 ? 1.2 : .7, w < .6 ? .7 : 1.8); ids.push(i); }
+  const g = new THREE.BufferGeometry();
+  g.setAttribute('position', new THREE.Float32BufferAttribute(pts, 3)); g.setAttribute('aCol', new THREE.Float32BufferAttribute(col, 3)); g.setAttribute('aId', new THREE.Float32BufferAttribute(ids, 1));
+  const m = new THREE.Points(g, new THREE.ShaderMaterial({
+    transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, uniforms: { uTime: U.uTime, uPx: U.uPx },
+    vertexShader: `attribute vec3 aCol; attribute float aId; uniform float uTime, uPx; varying vec3 vC; varying float vA;
+      float hh(float n){ return fract(sin(n) * 43758.5453); }
+      void main(){ vec3 p = position; float id = aId; p.y = mod(p.y + uTime * (.6 + hh(id) * .8), 100.) + 2.; p.x += sin(uTime * .2 + id) * 2.;
+        vA = (.4 + .6 * sin(uTime * 1.3 + id * 7.)) * .7; vec4 mv = viewMatrix * vec4(p, 1.); float d = -mv.z;
+        gl_PointSize = clamp(uPx * (.55 + hh(id + 1.) * .5) * 110. / d, 1., 26.); gl_Position = projectionMatrix * mv; vC = aCol; vA *= exp(-d * .004); }`,
+    fragmentShader: `varying vec3 vC; varying float vA; void main(){ float r = length(gl_PointCoord - .5); gl_FragColor = vec4(vC * vA * smoothstep(.5, 0., r) * smoothstep(.5, .1, r), 1.); }`
+  }));
+  m.frustumCulled = false; scene.add(m);
+  return { update(){} };
+}

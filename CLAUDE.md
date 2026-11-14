@@ -7,7 +7,7 @@ Owner: Kish (Malaysia). This repo holds the clickable prototype, first exported 
 ## What is in this folder
 
 - `index.html`: the page markup. It loads `src/main.js` as a module.
-- `src/`: the app, split into ES modules (see below). three.js r128 is installed from npm and pinned, because r128 APIs such as `outputEncoding` and `sRGBEncoding` were removed in later versions.
+- `src/`: the app, split into ES modules (see below). three.js is pinned at 0.180 (the 3D tiles library needs ≥ 0.167). `src/three/setup.js` turns off automatic colour management so colours behave as they did in r128; scenes render in linear and the world's grade pass (or the relic's ACES pass, which runs *before* bloom) does the tone mapping. Light intensities use physical units, so legacy values were multiplied by π where needed.
 - `docs/plan.md`: the business plan: positioning, journeys, pricing, partner-free model, rewards.
 - `README.md`: how to run, build and deploy.
 - `.github/workflows/deploy.yml`: builds with Vite and publishes `dist/` to GitHub Pages on every push to `main`.
@@ -27,7 +27,8 @@ Commands: `npm run dev`, `npm run build`, `npm run preview`.
 | `landing.js` | Renders the flight's chapters (opening line, one card per journey, closing view), card decks, collection, leaderboard and Keys. Every `data-open` goes through the portal dive |
 | `three/landmarks.js` | `buildLandmark()` makes the glass-and-brass 3D landmark for each journey |
 | `three/fog.js` | Tonight's moon phase (`phase`, `illum`) and `fogBurst()`, a pulse the 3D world flares on |
-| `three/world/world.js` | **The landing page is a 3D world.** Gate (hold the 3D seal) → camera dives through clouds → scroll flies along `CAM`/`LOOK` keyframes to four portals (`PORTALS`), pausing at each chapter (`SK`/`UK` map scroll to flight). Touching a portal or any Begin button dives through it (`dive()`), then opens the journey. Pauses rendering while the game overlay is open |
+| `three/world/world.js` | **The landing page is a 3D world.** Two camera/portal sets: `REALKL` (real city) and `DRAWN` (procedural fallback). Gate (hold the 3D seal) → camera dives through clouds → scroll flies along `CAM`/`LOOK` keyframes to four portals (`PORTALS`), pausing at each chapter (`SK`/`UK` map scroll to flight). Touching a portal or any Begin button dives through it (`dive()`), then opens the journey. Pauses rendering while the game overlay is open |
+| `three/world/realcity.js` | **The real KL**: Google Photorealistic 3D Tiles via `3d-tiles-renderer`, re-lit as night by a custom shader (moonlight, crimson wall glow, synthetic lit windows, sodium street light, floodlit landmarks in `FLOODS`). Positions come from real lat/lon (`REAL`, `toLocal`). Needs `VITE_GOOGLE_MAPS_KEY` at build time (GitHub secret `GOOGLE_MAPS_KEY`); add `?tiles=proxy` to test through a proxy that injects the key. If the tiles fail, the session falls back to the drawn city (`arc-notiles`). Google's attribution is shown in `#mapCredit` and must stay visible |
 | `three/world/city.js` | `KL` landmark coordinates; instanced buildings with window shader (kept below the flight path by `ceiling()`), wet reflective streets, traffic, River of Life, monorail, Bukit Bintang screens, Saloma Link, beacons and motes |
 | `three/world/skyline.js` | Petronas Twin Towers, KL Tower, Merdeka 118, Sultan Abdul Samad and Dataran Merdeka, lit by one pattern shader (`litMat`) |
 | `three/world/sky.js` | Star dome with tonight's real moon phase, and two cloud layers lit red from below |

@@ -3,6 +3,18 @@ import * as THREE from 'three';
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
+import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';
+
+// three.js r128 tone-mapped each material before the bloom; newer versions only tone-map at the end.
+// This pass restores the old order (ACES filmic, exposure .95) so the relic keeps its look.
+const ACES_FIRST = { uniforms: { tDiffuse: { value: null } },
+  vertexShader: 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.); }',
+  fragmentShader: `uniform sampler2D tDiffuse; varying vec2 vUv;
+    vec3 fit(vec3 v){ vec3 a = v * (v + .0245786) - .000090537; vec3 b = v * (.983729 * v + .4329510) + .238081; return a / b; }
+    void main(){ vec4 t = texture2D(tDiffuse, vUv); vec3 c = t.rgb * (.95 / .6);
+      const mat3 IN = mat3(.59719, .07600, .02840, .35458, .90834, .13383, .04823, .01566, .83777);
+      const mat3 OUT = mat3(1.60475, -.10208, -.00327, -.53108, 1.10813, -.07276, -.07367, -.00605, 1.07602);
+      c = clamp(OUT * fit(IN * c), 0., 1.); gl_FragColor = vec4(c, t.a); }` };
 import { reduce } from '../lib/util.js';
 import { chime } from '../ui/ambience.js';
 import { haptic } from '../ui/motion.js';
@@ -14,7 +26,7 @@ function createRelic(){
   let renderer;
   try{ renderer=new T.WebGLRenderer({antialias:true,alpha:false,powerPreference:'high-performance'}); }catch(e){ return NOOP; }
   renderer.setPixelRatio(Math.min(2,devicePixelRatio||1));
-  renderer.outputEncoding=T.sRGBEncoding; renderer.toneMapping=T.ACESFilmicToneMapping; renderer.toneMappingExposure=.95; renderer.setClearColor(0x05050d,1);
+  renderer.outputColorSpace=T.LinearSRGBColorSpace; renderer.toneMapping=T.NoToneMapping; renderer.toneMappingExposure=.95; renderer.setClearColor(0x05050d,1);
   const el=renderer.domElement; el.className='relic-canvas';
   const scene=new T.Scene(); scene.fog=new T.FogExp2(0x05050d,.07);
   const cam=new T.PerspectiveCamera(32,1,.1,50); cam.position.set(0,.1,6.9);
@@ -22,9 +34,9 @@ function createRelic(){
   const pm=new T.PMREMGenerator(renderer), es=new T.Scene(); es.background=new T.Color(0x0a0a18);
   [[0xffe9c0,3,4,2,3],[0x8f7dff,-4,1,1,4],[0x50d0c0,2,-3,-3,3],[0xffffff,0,0,6,2],[0xff9a70,-3,-2,-4,3]].forEach(([c,x,y,z,s])=>{ const m=new T.Mesh(new T.PlaneGeometry(s,s),new T.MeshBasicMaterial({color:c,side:T.DoubleSide})); m.position.set(x,y,z); m.lookAt(0,0,0); es.add(m); });
   scene.environment=pm.fromScene(es,.04).texture;
-  scene.add(new T.AmbientLight(0x6060a0,.35));
-  const key=new T.DirectionalLight(0xfff0d0,1.1); key.position.set(3,4,5); scene.add(key);
-  const core=new T.PointLight(0xffb65c,6,9,2); scene.add(core);
+  scene.add(new T.AmbientLight(0x6060a0, .35*Math.PI));
+  const key=new T.DirectionalLight(0xfff0d0, 1.1*Math.PI); key.position.set(3,4,5); scene.add(key);
+  const core=new T.PointLight(0xffb65c, 6,9,2); scene.add(core);
   const group=new T.Group(); scene.add(group);
   // drifting dust around the artefact
   const N=480, pos=new Float32Array(N*3);
@@ -33,7 +45,7 @@ function createRelic(){
   const dust=new T.Points(pg,new T.PointsMaterial({size:.03,color:0xfff2d0,transparent:true,opacity:.85,blending:T.AdditiveBlending,depthWrite:false})); scene.add(dust);
   const useComp=true;
   let composer=null, bloom=null;
-  if(useComp){ composer=new EffectComposer(renderer); composer.addPass(new RenderPass(scene,cam)); bloom=new UnrealBloomPass(new T.Vector2(256,256),.95,.6,.24); composer.addPass(bloom); }
+  if(useComp){ composer=new EffectComposer(renderer); composer.addPass(new RenderPass(scene,cam)); composer.addPass(new ShaderPass(ACES_FIRST)); bloom=new UnrealBloomPass(new T.Vector2(256,256),.95,.6,.24); composer.addPass(bloom); }
   const CFG={lantern:'#FFB65C',starfall:'#9FB0FF',feast:'#FF7A86',echo:'#7FD6C8'};
   let parts={}, accent=new T.Color('#C8443F'), kind='';
   function clear(){ while(group.children.length){ const c=group.children.pop(); c.traverse(o=>{ if(o.geometry) o.geometry.dispose(); if(o.material) o.material.dispose(); }); } parts={}; }
@@ -60,7 +72,7 @@ function createRelic(){
     group.scale.setScalar(1+kick*.32);
     animateLandmark(parts,s);
     if(parts.heart) parts.heart.scale.setScalar(1+.14*Math.sin(s*2.2)+kick*1.5);
-    core.intensity=5+resT*2.2+2*Math.sin(s*(2.2+resT*.4))+kick*30; core.color.copy(accent).lerp(red,Math.min(1,shake*1.6));
+    core.intensity=(5+resT*2.2+2*Math.sin(s*(2.2+resT*.4))+kick*30)*.8; core.color.copy(accent).lerp(red,Math.min(1,shake*1.6));
     if(bloom) bloom.strength=1+resT*.32+kick*2.4+shake*.8;
     dust.rotation.y=s*(.05+resT*.05); dust.scale.setScalar(1+kick*.45);
     composer?composer.render():renderer.render(scene,cam);
