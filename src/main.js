@@ -1,5 +1,4 @@
 /* Arcanum entry point. */
-import './three/setup.js';
 import './styles/main.css';
 import { initLanding, setDiveHook } from './landing.js';
 import { initWorld } from './three/world/world.js';

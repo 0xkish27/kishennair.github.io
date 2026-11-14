@@ -6,7 +6,7 @@ import { NOISE } from './glsl.js';
 export function buildPortals(scene, U, defs){
   const list = [];
   defs.forEach(d => {
-    const g = new THREE.Group(); g.position.copy(d.pos); g.lookAt(d.face); g.scale.setScalar(d.scale || 1); scene.add(g);
+    const g = new THREE.Group(); g.position.copy(d.pos); g.lookAt(d.face); scene.add(g);
     const col = new THREE.Color(d.color);
     const uHover = { value: 0 }, uWake = { value: 0 };
     const surf = new THREE.Mesh(new THREE.CircleGeometry(6, 96), new THREE.ShaderMaterial({

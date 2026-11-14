@@ -5,9 +5,9 @@ import * as THREE from 'three';
 export function buildSeal(camera){
   const root = new THREE.Group(); root.position.set(0, 0, -9); camera.add(root);
   const key = new THREE.DirectionalLight(0xffd6b8, .75); key.position.set(-3, 4, 6); root.add(key); key.target = root;
-  const rim = new THREE.PointLight(0x7a5cff, 3*Math.PI, 14, 2); rim.position.set(3.5, 2, -1.5); root.add(rim);
-  const fill = new THREE.PointLight(0xff3020, 1.5*Math.PI, 12, 2); fill.position.set(-2, -2, 3); root.add(fill);
-  root.add(new THREE.AmbientLight(0x301018, .25*Math.PI));
+  const rim = new THREE.PointLight(0x7a5cff, 3, 14, 2); rim.position.set(3.5, 2, -1.5); root.add(rim);
+  const fill = new THREE.PointLight(0xff3020, 1.5, 12, 2); fill.position.set(-2, -2, 3); root.add(fill);
+  root.add(new THREE.AmbientLight(0x301018, .25));
 
   // molten core, seen through the cracks as they open
   const coreTex = (() => { const c = document.createElement('canvas'); c.width = c.height = 128; const g = c.getContext('2d'); const r = g.createRadialGradient(64, 64, 0, 64, 64, 64);
@@ -59,7 +59,7 @@ export function buildSeal(camera){
         root.position.x = (Math.random() - .5) * tr; root.position.y += (Math.random() - .5) * tr;
         wedges.forEach(w => { w.position.copy(w.userData.dir).multiplyScalar(hold * .09); w.position.z = 0; w.rotation.set(0, 0, 0); });
         core.material.opacity = Math.min(1, hold * 1.4); core.scale.setScalar(2.6 + hold * 1.8);
-        wax.emissive.setRGB(.03 + hold * .35, hold * .05, 0); fill.intensity = (1.5 + hold * 14) * Math.PI;
+        wax.emissive.setRGB(.03 + hold * .35, hold * .05, 0); fill.intensity = 1.5 + hold * 14;
         halo.material.opacity = .16 + hold * .45 + .04 * Math.sin(s * 2);
       } else {
         const e = Math.min(k, 1.6);

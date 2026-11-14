@@ -10,8 +10,7 @@ import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';
 import { reduce } from '../../lib/util.js';
 import { GRADE_VS, GRADE_FS } from './glsl.js';
 import { buildSky } from './sky.js';
-import { buildCity, buildAir } from './city.js';
-import { buildRealCity } from './realcity.js';
+import { buildCity } from './city.js';
 import { buildSkyline } from './skyline.js';
 import { buildPortals } from './portals.js';
 import { buildSeal } from './seal.js';
@@ -23,24 +22,14 @@ import { sfx } from '../../ui/fx.js';
 const V = (x, y, z) => new THREE.Vector3(x, y, z);
 // the flight: where the camera is, and what it looks at, at each chapter
 // one sweep across the city with no doubling back: west (Lantern) → centre (Echo) → north-east (Starfall) → south-east (Feast) → up over it all
-const DRAWN = {   // the procedural city
-  CAM:  [V(0, 205, 250), V(-34, 74, 176), V(-64, 23, 50), V(16, 36, 0), V(22, 30, -20), V(70, 20, 70), V(8, 100, 186)],
-  LOOK: [V(0, 168, -40), V(-8, 6, -10), V(-80, 14, 17), V(-6, 30, -27), V(40, 25, -60), V(50, 11, 41), V(0, 12, -40)],
-  PORTALS: { lantern: [V(-79, 19, 18), 1], echo: [V(-5, 31, -25), 1], starfall: [V(35, 24, -46), 1], feast: [V(51, 16, 43), 1] }
-};
-const REALKL = {   // Google's 3D tiles of the real city: positions follow the landmarks' real coordinates (10 m units)
-  CAM:  [V(0, 205, 250), V(-40, 70, 170), V(-64, 18, 58), V(32, 30, 8), V(60, 27, -38), V(122, 18, 62), V(20, 95, 190)],
-  LOOK: [V(0, 168, -40), V(-10, 8, 0), V(-84, 10, 20), V(12, 25, -24), V(86, 22, -78), V(108, 9, 22), V(30, 10, -30)],
-  PORTALS: { lantern: [V(-78, 13, 26), .62], echo: [V(15, 26, -20), .62], starfall: [V(80, 21, -66), .7], feast: [V(106, 11, 27), .62] }
-};
-const KEY = import.meta.env.VITE_GOOGLE_MAPS_KEY || '';
-const VIA_PROXY = new URLSearchParams(location.search).get('tiles') === 'proxy';   // testing: the network proxy adds the key
-let noTiles = false; try { noTiles = sessionStorage.getItem('arc-notiles') === '1'; } catch (e) {}
-export const REAL_CITY = (!!KEY || VIA_PROXY) && !noTiles;   // falls back to the drawn city if Google's tiles failed this session
-const SET = REAL_CITY ? REALKL : DRAWN, CAM = SET.CAM, LOOK = SET.LOOK;
-const COLORS = { lantern: '#FFB65C', echo: '#6FE6D0', starfall: '#9FB0FF', feast: '#FF6A78' };
-const ORDER = { lantern: 2 / 6, echo: 3 / 6, starfall: 4 / 6, feast: 5 / 6 };
-export const PORTALS = Object.keys(ORDER).map(id => ({ id, u: ORDER[id], pos: SET.PORTALS[id][0], scale: SET.PORTALS[id][1], color: COLORS[id] }));
+const CAM  = [V(0, 205, 250), V(-34, 74, 176), V(-64, 23, 50), V(16, 36, 0), V(22, 30, -20), V(70, 20, 70), V(8, 100, 186)];
+const LOOK = [V(0, 168, -40), V(-8, 6, -10), V(-80, 14, 17), V(-6, 30, -27), V(40, 25, -60), V(50, 11, 41), V(0, 12, -40)];
+export const PORTALS = [
+  { id: 'lantern',  u: 2 / 6, pos: V(-79, 19, 18),  color: '#FFB65C' },
+  { id: 'starfall', u: 4 / 6, pos: V(35, 24, -46),  color: '#9FB0FF' },
+  { id: 'feast',    u: 5 / 6, pos: V(51, 16, 43),   color: '#FF6A78' },
+  { id: 'echo',     u: 3 / 6, pos: V(-5, 31, -25),  color: '#6FE6D0' }
+];
 // scroll (0..1 through the descent) → flight position, with pauses at every chapter
 const SK = [0, .06, .14, .22, .32, .40, .50, .58, .68, .76, .86, .94, 1];
 const UK = [0, 1 / 6, 1 / 6, 2 / 6, 2 / 6, 3 / 6, 3 / 6, 4 / 6, 4 / 6, 5 / 6, 5 / 6, 1, 1];
@@ -53,12 +42,12 @@ export function initWorld(){
   if (!renderer.getContext()) return null;
   const low = Math.min(innerWidth, innerHeight) < 620 || (navigator.hardwareConcurrency || 4) <= 4;
   const PR = Math.min(devicePixelRatio || 1, low ? 1.3 : 1.6);
-  renderer.setPixelRatio(PR); renderer.setSize(innerWidth, innerHeight); renderer.outputColorSpace = THREE.LinearSRGBColorSpace;
+  renderer.setPixelRatio(PR); renderer.setSize(innerWidth, innerHeight);
   const cvs = renderer.domElement; cvs.id = 'world'; cvs.setAttribute('aria-hidden', 'true'); document.body.prepend(cvs);
 
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(55, innerWidth / innerHeight, .5, 4200); scene.add(camera);
-  const U = { uTime: { value: 0 }, uFogColor: { value: new THREE.Color(.018, .004, .007) }, uFogDensity: { value: REAL_CITY ? .0026 : .0036 }, uPx: { value: PR * innerHeight / 900 }, uGround: { value: 0 } };
+  const U = { uTime: { value: 0 }, uFogColor: { value: new THREE.Color(.018, .004, .007) }, uFogDensity: { value: .0036 }, uPx: { value: PR * innerHeight / 900 } };
 
   buildSky(scene, U, phase);
   const flight = new THREE.CatmullRomCurve3(CAM, false, 'centripetal').getSpacedPoints(260).filter(p => p.y < 120);
@@ -66,14 +55,13 @@ export function initWorld(){
     flight.forEach(p => { const d = Math.hypot(p.x - x, p.z - z); if (d < 34) h = Math.min(h, p.y - 15 + d * .3); });
     PORTALS.forEach(p => { const d = Math.hypot(p.pos.x - x, p.pos.z - z); if (d < 24) h = Math.min(h, p.pos.y - 13 + d * .2); });
     return h; };
-  let city, real = null;
-  if (REAL_CITY){ real = buildRealCity(scene, U, camera, renderer, { key: KEY, viaProxy: VIA_PROXY, low }); city = buildAir(scene, U, low); }
-  else { city = buildCity(scene, U, low, ceiling); buildSkyline(scene, U); }
+  const city = buildCity(scene, U, low, ceiling);
+  buildSkyline(scene, U);
   const portals = buildPortals(scene, U, PORTALS.map(p => { const i = Math.round(p.u * 6); return { ...p, face: CAM[i] }; }));
   const seal = buildSeal(camera);
 
   // HDR render targets so bright windows keep their energy for the bloom and the grade
-  const hdr = true;
+  const hdr = renderer.capabilities.isWebGL2;
   const rt = new THREE.WebGLRenderTarget(innerWidth * PR, innerHeight * PR, { minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter, format: THREE.RGBAFormat, type: hdr ? THREE.HalfFloatType : THREE.UnsignedByteType });
   const composer = new EffectComposer(renderer, rt); composer.setPixelRatio(PR); composer.setSize(innerWidth, innerHeight);
   composer.addPass(new RenderPass(scene, camera));
@@ -132,16 +120,10 @@ export function initWorld(){
   /* ---------------- render loop ---------------- */
   const camPath = new THREE.CatmullRomCurve3(CAM, false, 'centripetal'), lookPath = new THREE.CatmullRomCurve3(LOOK, false, 'centripetal');
   const tmpL = new THREE.Vector3(), side = new THREE.Vector3(), upv = new THREE.Vector3(0, 1, 0);
-  let last = performance.now(), frozen = false;
+  let last = performance.now();
   function frame(now){
     requestAnimationFrame(frame);
-    if (document.body.classList.contains('app-open')){
-      // freeze on a clean, dimmed frame (never on the white of a portal flash) while the game is open
-      if (!frozen){ frozen = true; grade.uniforms.uFlash.value = 0; grade.uniforms.uDim.value = .82; composer.render(); }
-      last = now; return;
-    }
-    frozen = false;
-    if (document.hidden) { last = now; return; }
+    if (document.hidden || document.body.classList.contains('app-open')) { last = now; return; }
     const rawDt = Math.min(.3, (now - last) / 1000), dt = Math.min(.05, rawDt); last = now;
     U.uTime.value = now / 1000;
 
@@ -187,19 +169,12 @@ export function initWorld(){
 
     portals.update(tt, focus, hoverId || (portalDive && portalDive.id));
     city.update(tt);
-    if (real) real.update();
     seal.update(now);
     kick *= .95; bloom.strength = .95 + kick * .5 + (portalDive ? .8 : 0);
     flash = portalDive ? flash : flash * Math.pow(.18, dt); grade.uniforms.uFlash.value = Math.min(1, flash);
     composer.render();
   }
   requestAnimationFrame(frame);
-  window.__arcWorld = { scene, camera, bloom, grade, seal, real };
-  if (real){
-    const credit = document.createElement('div'); credit.id = 'mapCredit'; credit.setAttribute('aria-label', 'Map data attribution'); document.body.appendChild(credit);
-    setInterval(() => { const a = real.attributions().filter(x => x.type === 'string').map(x => x.value).join('; ');
-      credit.innerHTML = `<b>Google</b><span>${(a || 'Map data ©Google').replace(/[<>&]/g, '')}</span>`; credit.hidden = document.body.classList.contains('app-open'); }, 1500);
-  }   // handle for debugging and capture tools
 
   addEventListener('resize', () => {
     camera.aspect = innerWidth / innerHeight; camera.fov = innerWidth < innerHeight ? 68 : 55; camera.updateProjectionMatrix();
