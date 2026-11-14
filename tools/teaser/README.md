@@ -1,6 +1,10 @@
 # Teaser toolkit
 
-Cuts the 27-second vertical Arcanum teaser from six generated clips.
+Cuts the vertical Arcanum teaser from generated clips, or from still images brought to life.
+
+**From stills:** put images named `1.*` … `4.*` in a folder and run `python3 tools/teaser/stills.py images clips` first.
+Each still gets a smooth camera move (`moves` in `timeline.json`) plus drifting mist and rising embers (`atmos.py`);
+the last shot dives into the portal and flares to white. Then run the three commands below with `clips`.
 
 1. Put the clips in a folder, named `1.mp4` … `6.mp4` (any format or size; they are reframed to 1080×1920).
 2. Render the titles and score, then assemble:

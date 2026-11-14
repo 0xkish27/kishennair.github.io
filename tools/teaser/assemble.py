@@ -17,7 +17,7 @@ GRADE = ('eq=contrast=1.07:brightness=-0.025:saturation=0.86,'
          'colorbalance=rs=0.07:gs=-0.02:bs=-0.03:rm=0.035:bm=-0.02:rh=0.015,'
          'vignette=angle=PI/4.3,noise=alls=7:allf=t+u')
 # transitions: a white flash as the seal breaks into the dive, dissolves between shots, black into the end card
-TRANS = ['fadewhite', 'fade', 'fade', 'fade', 'fade', 'fadeblack']
+TRANS = TL.get('transitions') or (['fadewhite'] + ['fade'] * (len(TL['shots']) - 2) + ['fadeblack'])
 
 args, f = ['ffmpeg', '-y', '-loglevel', 'error'], []
 for s in shots: args += ['-i', s]

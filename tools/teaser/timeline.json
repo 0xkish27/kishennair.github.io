@@ -2,66 +2,125 @@
  "fps": 30,
  "dissolve": 0.5,
  "shots": [
+  5.0,
   4.5,
   4.5,
-  4.0,
   4.5,
-  4.0,
-  4.0
+  3.5
  ],
  "end": 4.5,
  "starts": [
   0,
-  4.0,
-  8.0,
-  11.5,
-  15.5,
-  19.0,
-  22.5
+  4.5,
+  8.5,
+  12.5,
+  16.5,
+  19.5
  ],
- "total": 27.0,
+ "total": 24.0,
  "cues": [
   {
    "t0": 0.5,
-   "t1": 2.2,
+   "t1": 2.4,
    "pos": "top",
    "label": "kuala lumpur · after dark",
    "text": "A seal was left <em>for you.</em>"
   },
   {
-   "t0": 2.5,
-   "t1": 3.8,
+   "t0": 2.7,
+   "t1": 4.3,
    "pos": "top",
    "label": "",
    "text": "Break it <em>together.</em>"
   },
   {
-   "t0": 4.6,
-   "t1": 7.4,
-   "pos": "top",
+   "t0": 5.0,
+   "t1": 8.0,
+   "pos": "bottom",
    "label": "",
    "text": "The city you know <em>has a second face.</em>"
   },
   {
-   "t0": 8.6,
-   "t1": 11.0,
+   "t0": 9.0,
+   "t1": 12.0,
    "pos": "bottom",
    "label": "four journeys",
    "text": "Four doors <em>open tonight.</em>"
   },
   {
-   "t0": 12.1,
-   "t1": 14.9,
+   "t0": 13.0,
+   "t1": 15.9,
    "pos": "bottom",
    "label": "riddles · locks · mini games",
    "text": "A night <em>made for two.</em>"
   },
   {
-   "t0": 16.1,
-   "t1": 18.6,
+   "t0": 16.9,
+   "t1": 19.0,
    "pos": "bottom",
    "label": "",
    "text": "Only two <em>may enter.</em>"
   }
+ ],
+ "images": [
+  1,
+  2,
+  3,
+  4,
+  4
+ ],
+ "transitions": [
+  "fadewhite",
+  "fade",
+  "fade",
+  "fade",
+  "fadewhite"
+ ],
+ "moves": [
+  [
+   1.0,
+   1.16,
+   0.5,
+   0.55,
+   0.5,
+   0.5,
+   "push"
+  ],
+  [
+   1.18,
+   1.02,
+   0.5,
+   0.3,
+   0.5,
+   0.5,
+   "push"
+  ],
+  [
+   1.0,
+   1.18,
+   0.5,
+   0.6,
+   0.5,
+   0.35,
+   "push"
+  ],
+  [
+   1.0,
+   1.12,
+   0.5,
+   0.55,
+   0.5,
+   0.4,
+   "push"
+  ],
+  [
+   1.12,
+   4.2,
+   0.5,
+   0.4,
+   0.5,
+   0.205,
+   "dive"
+  ]
  ]
 }
