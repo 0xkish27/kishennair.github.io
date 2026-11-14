@@ -2,6 +2,12 @@
 
 Cuts the vertical Arcanum teaser from generated clips, or from still images brought to life.
 
+**From real footage:** put the source clips in a folder (paths in `footage` in `timeline.json`, relative to it) and run
+`python3 tools/teaser/footage.py footage clips` first: it trims, reframes to 9:16 (`x` = horizontal focus, `zoom` = slow push),
+grades blood-red and screen-blends real embers and mist (`overlays`). The current cut uses free Mixkit clips
+(Mixkit licence, commercial use, no attribution needed): KL night footage 20137, 20183, 20122, 20119, mood clips 48919 (candle),
+2396 (couple), 3465 (embers), 50957 (mist), from `https://assets.mixkit.co/videos/<id>/<id>-720.mp4` (or `-1080`).
+
 **From stills:** put images named `1.*` … `4.*` in a folder and run `python3 tools/teaser/stills.py images clips` first.
 Each still gets a smooth camera move (`moves` in `timeline.json`) plus drifting mist and rising embers (`atmos.py`);
 the last shot dives into the portal and flares to white. Then run the three commands below with `clips`.

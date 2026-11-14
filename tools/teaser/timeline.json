@@ -2,125 +2,134 @@
  "fps": 30,
  "dissolve": 0.5,
  "shots": [
-  5.0,
-  4.5,
-  4.5,
-  4.5,
-  3.5
+  4.0,
+  4.0,
+  4.0,
+  4.0,
+  4.0,
+  4.0
  ],
  "end": 4.5,
  "starts": [
   0,
-  4.5,
-  8.5,
-  12.5,
-  16.5,
-  19.5
+  3.5,
+  7.0,
+  10.5,
+  14.0,
+  17.5,
+  21.0
  ],
- "total": 24.0,
+ "total": 25.5,
  "cues": [
   {
    "t0": 0.5,
-   "t1": 2.4,
+   "t1": 3.2,
    "pos": "top",
    "label": "kuala lumpur · after dark",
    "text": "A seal was left <em>for you.</em>"
   },
   {
-   "t0": 2.7,
-   "t1": 4.3,
-   "pos": "top",
-   "label": "",
-   "text": "Break it <em>together.</em>"
-  },
-  {
-   "t0": 5.0,
-   "t1": 8.0,
+   "t0": 4.0,
+   "t1": 6.8,
    "pos": "bottom",
    "label": "",
    "text": "The city you know <em>has a second face.</em>"
   },
   {
-   "t0": 9.0,
-   "t1": 12.0,
+   "t0": 7.5,
+   "t1": 10.2,
    "pos": "bottom",
    "label": "four journeys",
    "text": "Four doors <em>open tonight.</em>"
   },
   {
-   "t0": 13.0,
-   "t1": 15.9,
+   "t0": 11.0,
+   "t1": 13.8,
    "pos": "bottom",
-   "label": "riddles · locks · mini games",
+   "label": "",
    "text": "A night <em>made for two.</em>"
   },
   {
-   "t0": 16.9,
-   "t1": 19.0,
+   "t0": 14.5,
+   "t1": 17.2,
+   "pos": "bottom",
+   "label": "riddles · locks · mini games",
+   "text": "Riddles in the streets. <em>Locks in the dark.</em>"
+  },
+  {
+   "t0": 18.0,
+   "t1": 20.6,
    "pos": "bottom",
    "label": "",
    "text": "Only two <em>may enter.</em>"
   }
- ],
- "images": [
-  1,
-  2,
-  3,
-  4,
-  4
  ],
  "transitions": [
   "fadewhite",
   "fade",
   "fade",
   "fade",
-  "fadewhite"
+  "fade",
+  "fadeblack"
  ],
- "moves": [
-  [
-   1.0,
-   1.16,
-   0.5,
-   0.55,
-   0.5,
-   0.5,
-   "push"
-  ],
-  [
-   1.18,
-   1.02,
-   0.5,
-   0.3,
-   0.5,
-   0.5,
-   "push"
-  ],
-  [
-   1.0,
-   1.18,
-   0.5,
-   0.6,
-   0.5,
-   0.35,
-   "push"
-  ],
-  [
-   1.0,
-   1.12,
-   0.5,
-   0.55,
-   0.5,
-   0.4,
-   "push"
-  ],
-  [
-   1.12,
-   4.2,
-   0.5,
-   0.4,
-   0.5,
-   0.205,
-   "dive"
-  ]
- ]
+ "footage": [
+  {
+   "src": "mood/48919.mp4",
+   "ss": 4,
+   "x": 0.62,
+   "zoom": [
+    1.0,
+    1.12
+   ],
+   "embers": 0.35
+  },
+  {
+   "src": "kl/20137.mp4",
+   "ss": 2,
+   "x": 0.5,
+   "embers": 0.5
+  },
+  {
+   "src": "kl/20183.mp4",
+   "ss": 0.5,
+   "x": 0.55,
+   "mist": 0.25
+  },
+  {
+   "src": "mood/2396.mp4",
+   "ss": 1,
+   "x": 0.5,
+   "embers": 0.4
+  },
+  {
+   "src": "kl/20122.mp4",
+   "ss": 2,
+   "x": 0.42,
+   "zoom": [
+    1.0,
+    1.08
+   ],
+   "mist": 0.3
+  },
+  {
+   "src": "kl/20119.mp4",
+   "ss": 1,
+   "x": 0.5,
+   "zoom": [
+    1.0,
+    1.1
+   ],
+   "embers": 0.55
+  }
+ ],
+ "overlays": {
+  "embers": {
+   "src": "mood/3465.mp4",
+   "ss": 1
+  },
+  "mist": {
+   "src": "mood/50957.mp4",
+   "ss": 0
+  }
+ }
 }
