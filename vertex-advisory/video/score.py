@@ -1,10 +1,10 @@
 """Vertex intro score: warm cinematic electronic, D major, 100 bpm, 39 s.
 Timed to film.html / film_v.html:
-  0-4.8   logo: pad swell, bell on the gold apex (~1.9 s)
+  0-4.8   logo: pad swell
   4.8-9.6 headline: electric piano chords + sub
   9.6-14.4 "Stop overpaying": arp enters, hats, riser
   14.4    globe: beat drops (kick, clap, bass, arp with delay)
-  33.6    CTA: drums out, final D major 9 rings out
+  33.6    CTA: drums out, final D major 9 pad rings out
 Writes m_intro.wav and m_vert.wav (same track). Needs numpy + scipy.
 """
 import numpy as np, wave
@@ -68,23 +68,15 @@ def pad_note(m, dur, bright):
 
 
 def ep(m, dur, vel=1.0):
-    """FM electric piano / soft bell."""
+    """Soft FM electric piano."""
     n = int(dur * SR)
     t = np.arange(n) / SR
     fr = f(m)
-    idx = 1.6 * vel * np.exp(-t * 3.5)
+    idx = 0.5 * vel * np.exp(-t * 6)
     tone = np.sin(2 * np.pi * fr * t + idx * np.sin(2 * np.pi * fr * t))
-    tone += 0.25 * np.sin(2 * np.pi * fr * 2 * t) * np.exp(-t * 6)
+    tone += 0.12 * np.sin(2 * np.pi * fr * 2 * t) * np.exp(-t * 8)
+    tone = lp(tone, 2200)
     return tone * np.exp(-t * 1.8) * np.minimum(1, t / 0.004) * vel
-
-
-def bell(m, dur):
-    n = int(dur * SR)
-    t = np.arange(n) / SR
-    fr = f(m)
-    idx = 2.2 * np.exp(-t * 1.2)
-    s = np.sin(2 * np.pi * fr * t + idx * np.sin(2 * np.pi * fr * 3.5 * t))
-    return s * np.exp(-t * 0.9) * np.minimum(1, t / 0.002)
 
 
 def pluck(m, dur):
@@ -202,7 +194,7 @@ CH = [
 ]
 FINAL = dict(root=38, pad=[50, 57, 61, 64, 66, 69], arp=[62, 66, 69, 73, 76, 78])
 
-pads, keys, arps, bass, drums, fx, bells = (bus() for _ in range(7))
+pads, keys, arps, bass, drums, fx = (bus() for _ in range(6))
 kicks = []
 
 nbars = int(np.ceil(D / BAR))
@@ -258,15 +250,9 @@ for b in range(nbars):
                 put(drums, clap(), a + BAR - BEAT * 2 + s * BEAT / 4, 0.05 + 0.012 * s)
 
 # moments
-put(bells, bell(81, 4), 1.85, 0.16, 0.2)           # gold apex lights up
-put(bells, bell(74, 4), 1.85, 0.12, -0.2)
-put(bells, bell(78, 3), 4.75, 0.08, 0.3)            # headline
 put(fx, riser(BAR * 1.5), DROP - BAR * 1.5, 0.22)
 put(fx, impact(), DROP, 0.35)
 put(fx, impact(), END, 0.22)
-for i, m in enumerate([74, 78, 81, 85, 86]):       # CTA shimmer
-    put(bells, bell(m, 5), END + 0.02 + i * 0.16, 0.09, -0.4 + i * 0.2)
-put(bells, bell(86, 4), 36.0, 0.07, 0.4)             # button sheen
 
 # sidechain pump on pads, keys and bass after the drop
 t = np.arange(N) / SR
@@ -278,9 +264,9 @@ for k in kicks:
 duck = duck[:, None]
 
 pads = hp(pads, 160)
-dry = pads * duck + keys * (0.6 + 0.4 * duck) + bass * duck + arps + drums + fx + bells
-send = pads * 0.5 + keys * 0.5 + arps * 0.35 + bells * 0.8 + fx * 0.3 + drums * 0.08
-mix = dry + reverb(send) * 0.55 + pingpong(arps + bells * 0.5, BEAT * 0.75) * 0.6
+dry = pads * duck + keys * (0.6 + 0.4 * duck) + bass * duck + arps + drums + fx
+send = pads * 0.5 + keys * 0.5 + arps * 0.35 + fx * 0.3 + drums * 0.08
+mix = dry + reverb(send) * 0.55 + pingpong(arps, BEAT * 0.75) * 0.6
 mix = hp(mix, 28)
 mix = mix + hp(mix, 3000) * 0.5   # presence / air
 
