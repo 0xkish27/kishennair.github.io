@@ -27,4 +27,4 @@ npx playwright install chromium
 npm run music
 npm run render:intro   # also render:vertical, render:x
 ```
-Needs Node 18+, Python 3 with numpy, and ffmpeg.
+Needs Node 18+, Python 3 with numpy and scipy, and ffmpeg. `score.py` makes the intro music (both cuts); `synth.py` makes the X video music.
